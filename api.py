@@ -2,13 +2,13 @@
 # encoding: utf-8
 import json
 from database.repository.superban import SuperbanRepository
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,render_template
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return json.dumps({'error': 'Not Found'})
+    return render_template("home.html")
 
 @app.route('/blacklist', methods=['GET'])
 def blacklist():
@@ -26,4 +26,4 @@ def blacklist():
     else:
         return jsonify({'error': 'data not found'})
 
-app.run(host='0.0.0.0',port=5000,debug=True)
+app.run(host='0.0.0.0',port=5000,debug=False)
