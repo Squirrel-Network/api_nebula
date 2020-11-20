@@ -22,7 +22,7 @@ def blacklist():
             'user_date': row['user_date'],
             'id_operator': row['id_operator']})
         else:
-            return jsonify({'error': 'The user was not superanned or you entered an incorrect id'})
+            return jsonify({'error': 'The user was not super banned or you entered an incorrect id'})
     else:
         return jsonify({'error': 'data not found'})
 
