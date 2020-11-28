@@ -14,3 +14,6 @@
 `pip install -r requirements.txt`
 
 - `python3 api.py`
+
+## API Endpoints
+- BLACKLIST: `example.com:5000/blacklist?tgid=123456789`
