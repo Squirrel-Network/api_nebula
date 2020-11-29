@@ -12,7 +12,7 @@ def index():
 
 @app.route('/blacklist', methods=['GET'])
 def blacklist():
-    user_id = request.args.get('tgid')
+    user_id = request.args.get('tgid',type=int)
     if user_id is not None and user_id != "":
         user_id = int(user_id)
         row = SuperbanRepository().getById([user_id])
