@@ -18,9 +18,9 @@ def blacklist():
         row = SuperbanRepository().getById([user_id])
         if row:
             return jsonify({'tg_id': row['user_id'],
-            'motivation': row['motivation_text'],
-            'user_date': row['user_date'],
-            'id_operator': row['id_operator']})
+            'reason': row['motivation_text'],
+            'date': row['user_date'],
+            'operator': row['id_operator']})
         else:
             return jsonify({'error': 'The user was not super banned or you entered an incorrect id'})
     else:
