@@ -34,3 +34,8 @@ class UserRepository(Connection):
     def update(self, args=None):
         q = "UPDATE users SET tg_username = %s WHERE tg_id = %s"
         return self._update(q,args)
+
+    def deleteUser(self, args=None):
+        q = "DELETE FROM users WHERE tg_id = %s"
+        print(args)
+        return self._delete(q,args)

@@ -55,7 +55,7 @@ def users():
     else:
         return jsonify({'error': "You don't have permission to access this api"})
 
-@app.route('/user', methods=['GET','POST','DELETE','PUT'])
+@app.route('/user', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 def user():
@@ -73,6 +73,20 @@ def user():
             return jsonify({'error': 'You have entered an id that does not exist or you have entered incorrect data'})
     else:
         return jsonify({'error': "You don't have permission to access this api"})
+
+@app.route('/delete_user', methods=['DELETE'])
+@limiter.limit("500 per day")
+@limiter.limit("2/seconds")
+def delete_user():
+    user_id = request.args.get('tgid',type=int)
+    token = request.args.get('token')
+    if user_id is not None and user_id != "" and token == Config.TOKEN and token is not None and token != "":
+        data = [(user_id)]
+        UserRepository().deleteUser(data)
+        return jsonify({'response': 'User successfully deleted'})
+    else:
+        return jsonify({'error': "You don't have permission to access this api"})
+
 
 
 if __name__ == "__main__":
