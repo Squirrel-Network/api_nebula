@@ -16,6 +16,6 @@
 - `python3 api.py`
 
 ## API Endpoints
-- BLACKLIST: `example.com/blacklist?tgid=123456789`
-- USERS: `example.com/users?limit=10&token=XXXXXXX`
-- USER: `example.com/user?tgid=123456789&token=XXXXXXX`
+- BLACKLIST: `example.com/blacklist?tgid=123456789 (Public API)`
+- USERS: `example.com/users?limit=10&token=XXXXXXX (Private API)`
+- USER: `example.com/user?tgid=123456789&token=XXXXXXX (Private API)`
