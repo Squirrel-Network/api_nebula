@@ -2,7 +2,8 @@
 # encoding: utf-8
 from config import Config
 from database.repository.superban import SuperbanRepository
-from flask import Flask, jsonify, request,render_template
+from database.repository.users import UserRepository
+from flask import Flask, Response, jsonify, request,render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
@@ -40,6 +41,19 @@ def blacklist():
             return jsonify({'error': 'The user was not super banned or you entered an incorrect id'})
     else:
         return jsonify({'error': 'data not found'})
+
+@app.route('/users', methods=['GET'])
+@limiter.limit("5000 per day")
+@limiter.limit("10/seconds")
+def users():
+    limit = request.args.get('limit', type=int)
+    token = request.args.get('token')
+    rows = UserRepository().getAll([limit])
+
+    if limit is not None and limit != "" and token == Config.TOKEN and token is not None and token != "":
+        return jsonify(list(map(lambda row: {'id': row['id'],'tg_id': row['tg_id'],'username': row['tg_username'],'warn': row['warn_count']}, rows)))
+    else:
+        return jsonify({'error': "You don't have permission to access this api"})
 
 
 if __name__ == "__main__":

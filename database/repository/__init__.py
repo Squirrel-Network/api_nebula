@@ -1,3 +1,3 @@
-__all__ = ["superban"]
+__all__ = ["superban","users"]
 
 from database.repository import *

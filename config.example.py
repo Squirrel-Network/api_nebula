@@ -16,3 +16,4 @@ class Config(object):
      ####   APP SETTINGS    ####
      ##########################
      DEBUG = False
+     TOKEN = 'INSERT TOKEN HERE'
