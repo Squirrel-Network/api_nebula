@@ -23,7 +23,6 @@ class UserRepository(Connection):
 
     def getAll(self,args=None):
         q = "SELECT * FROM users LIMIT %s"
-        print(args)
         #query = Query.from_(users).select("*")
         #q = query.get_sql(quote_char=None)
         return self._selectAll(q,args)
