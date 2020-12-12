@@ -16,4 +16,6 @@
 - `python3 api.py`
 
 ## API Endpoints
-- BLACKLIST: `example.com:5000/blacklist?tgid=123456789`
+- BLACKLIST: `example.com/blacklist?tgid=123456789`
+- USERS: `example.com/users?limit=10&token=XXXXXXX`
+- USER: `example.com/user?tgid=123456789&token=XXXXXXX`
