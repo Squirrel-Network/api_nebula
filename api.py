@@ -20,7 +20,8 @@ limiter = Limiter(
 
 @app.route('/')
 def index():
-    return render_template("home.html")
+    data = SuperbanRepository().getLastSuperBanned()
+    return render_template("home.html", data = data)
 
 @app.route('/blacklist', methods=['GET'])
 @limiter.limit("1000 per day")
@@ -39,6 +40,7 @@ def blacklist():
             return jsonify({'error': 'The user was not super banned or you entered an incorrect id'})
     else:
         return jsonify({'error': 'data not found'})
+
 
 if __name__ == "__main__":
     app.run(debug=Config.DEBUG)
