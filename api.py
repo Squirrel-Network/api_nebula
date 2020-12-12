@@ -1,16 +1,30 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import json
+from config import Config
 from database.repository.superban import SuperbanRepository
 from flask import Flask, jsonify, request,render_template
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 
 app = Flask(__name__)
+#Enable CORS Policy
+CORS(app)
+
+#Limit Request
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["150 per minute", "1 per second"],
+)
 
 @app.route('/')
 def index():
     return render_template("home.html")
 
 @app.route('/blacklist', methods=['GET'])
+@limiter.limit("1000 per day")
+@limiter.limit("3/seconds")
 def blacklist():
     user_id = request.args.get('tgid',type=int)
     if user_id is not None and user_id != "":
@@ -27,4 +41,4 @@ def blacklist():
         return jsonify({'error': 'data not found'})
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=Config.DEBUG)
