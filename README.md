@@ -19,3 +19,4 @@
 - BLACKLIST: `example.com/blacklist?tgid=123456789 (Public API)`
 - USERS: `example.com/users?limit=10&token=XXXXXXX (Private API)`
 - USER: `example.com/user?tgid=123456789&token=XXXXXXX (Private API)`
+- DELETE USER: `example.com/delete_user?tgid=123456789&token=XXXXXXX (Private API)`
