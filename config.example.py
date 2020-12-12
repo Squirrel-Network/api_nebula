@@ -12,3 +12,7 @@ class Config(object):
      USER = ''
      PASSWORD = ''
      DBNAME = ''
+     ###########################
+     ####   APP SETTINGS    ####
+     ##########################
+     DEBUG = False
