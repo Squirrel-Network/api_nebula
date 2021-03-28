@@ -16,14 +16,21 @@ CORS(app)
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["150 per minute", "1 per second"],
+    default_limits=["150 per minute", "2 per second"],
 )
 
+#############
+### Home ###
+############
 @app.route('/')
 def index():
     data = SuperbanRepository().getLastSuperBanned()
-    return render_template("home.html", data = data)
+    countsb = SuperbanRepository().getCountSuperBanned()
+    return render_template("home.html", data = data, countsb = countsb['counter'])
 
+##########################
+### Blacklist Endpoint ###
+##########################
 @app.route('/blacklist', methods=['GET'])
 @limiter.limit("1000 per day")
 @limiter.limit("3/seconds")
@@ -38,10 +45,33 @@ def blacklist():
             'date': row['user_date'],
             'operator': row['id_operator']})
         else:
-            return jsonify({'error': 'The user was not super banned or you entered an incorrect id'})
+            return jsonify({'error': 'The user was not superbanned or you entered an incorrect id'})
     else:
         return jsonify({'error': 'data not found'})
 
+
+@app.route('/add_blacklist', methods=['POST'])
+@limiter.limit("5000 per day")
+@limiter.limit("10/seconds")
+def add_blacklist():
+    user_id = request.args.get('tgid',type=int)
+    motivation = request.args.get('motivation',type=str)
+    date = request.args.get('date',type=str)
+    operator_id = request.args.get('operator',type=int)
+    token = request.args.get('token')
+    if token == Config.TOKEN and token is not None and token != "":
+        print(user_id)
+        print(motivation)
+        print(date)
+        print(operator_id)
+        print(token)
+    else:
+        return jsonify({'error': "You don't have permission to access this api"})
+    return jsonify({'user': user_id,'motivation': motivation, 'date': date, 'operator': operator_id, 'token': token})
+
+###########################
+### User/Users Endpoint ###
+###########################
 @app.route('/users', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
