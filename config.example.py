@@ -17,3 +17,5 @@ class Config(object):
      ##########################
      DEBUG = False
      TOKEN = 'INSERT TOKEN HERE'
+     SECRET = 'INSERT APP SECRET HERE'
+     TOKEN_DURATION_MINUTES = 30

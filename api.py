@@ -7,10 +7,14 @@ from flask import Flask, Response, jsonify, request,render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
+from auth_manager import setup_auth
 
 app = Flask(__name__)
+app.config.from_object(Config)
 #Enable CORS Policy
 CORS(app)
+
+auth = setup_auth(app)
 
 #Limit Request
 limiter = Limiter(
@@ -27,6 +31,12 @@ def index():
     data = SuperbanRepository().getLastSuperBanned()
     countsb = SuperbanRepository().getCountSuperBanned()
     return render_template("home.html", data = data, countsb = countsb['counter'])
+
+
+@app.route('/hi')
+@auth.auth_required()
+def hi():
+    return { "status": "hi!" } 
 
 ##########################
 ### Blacklist Endpoint ###
@@ -119,5 +129,7 @@ def delete_user():
 
 
 
+
 if __name__ == "__main__":
-    app.run(debug=Config.DEBUG)
+    app.run(debug=True , host='0.0.0.0')
+    app.run(debug=Config.DEBUG, host=Config.FLASK_HOST)
