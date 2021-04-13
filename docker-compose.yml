@@ -1,0 +1,30 @@
+version: '3.3'
+services:
+  db:
+    image: mariadb:10.4.17
+    ports:
+      - '3307:3306'
+    volumes:
+      - ../data/db-docker:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: io
+  backend:
+    image:  python:alpine
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: nebula
+      DB_USERNAME: root
+      DB_PASSWORD: io
+      FLASK_APP: api.py
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+    command: sh -c "cd /api_nebula; pip install -r requirements.txt;  flask run --host 0.0.0.0 --reload "
+    #command: sh -c "sleep 1000000"
+    volumes:
+       - .:/api_nebula:cached
+       - nebapi-py-libs:/root/.cache/pip
+volumes:
+  nebapi-py-libs:
