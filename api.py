@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
+import datetime
 from flask.json import jsonify
 from config import Config
 from database.repository.superban import SuperbanRepository
@@ -37,7 +38,7 @@ def index():
 @app.route('/hi')
 @auth.auth_required()
 def hi():
-    return { "status": "hi!" } 
+    return { "status": "hi!" }
 
 ##########################
 ### Blacklist Endpoint ###
@@ -68,13 +69,18 @@ def blacklist():
 def add_blacklist():
     user_id = request.args.get('tgid',type=int)
     motivation = request.args.get('motivation',type=str)
-    date = request.args.get('date',type=str)
+    date = datetime.datetime.utcnow().isoformat()
     operator_id = request.args.get('operator',type=int)
-    print(user_id)
-    print(motivation)
-    print(date)
-    print(operator_id)
-    return {'user': user_id,'motivation': motivation, 'date': date, 'operator': operator_id }
+    data = [(user_id, motivation, date, operator_id)]
+    row = SuperbanRepository().getById([user_id])
+    if user_id is not None and user_id != "" and motivation is not None and motivation != "" and operator_id is not None and operator_id != "":
+        if row:
+            return {'response': 'The user has already been blacklisted'}
+        else:
+            SuperbanRepository().add(data)
+            return {'response': 'User successfully blacklisted'}
+    else:
+        return {'response': 'Missing Parameters'}
 
 ###########################
 ### User/Users Endpoint ###
@@ -85,7 +91,6 @@ def add_blacklist():
 @auth.auth_required()
 def users():
     limit = request.args.get('limit', 50, type=int)
-    
     rows = UserRepository().getAll([limit])
 
     return jsonify(list(map(lambda row: {
@@ -124,4 +129,4 @@ def delete_user():
 
 if __name__ == "__main__":
     #app.run(debug=True , host='0.0.0.0')
-    app.run(debug=Config.DEBUG, host=Config.FLASK_HOST)
+    app.run(debug=False, host='localhost')
