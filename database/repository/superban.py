@@ -11,8 +11,7 @@ class SuperbanRepository(Connection):
         return self._select(q, args)
 
     def getAll(self, args=None):
-        query = Query.from_(superban).select("user_id").where(superban.user_id == '%s')
-        q = query.get_sql(quote_char=None)
+        q = "SELECT * FROM superban_table LIMIT %s"
 
         return self._selectAll(q, args)
 

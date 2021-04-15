@@ -61,6 +61,22 @@ def blacklist():
     else:
         return ({'error': 'missing or invalid tgid'}, 400)
 
+@app.route('/getblacklist', methods=['GET'])
+@limiter.limit("5000 per day")
+@limiter.limit("10/seconds")
+@auth.auth_required()
+def get_blacklist():
+    limit = request.args.get('limit', 100, type=int)
+    rows = SuperbanRepository().getAll([limit])
+
+    return jsonify(list(map(lambda row: {
+        'id': row['id'],
+        'tg_id': row['user_id'],
+        'motivation': row['motivation_text'],
+        'date': row['user_date'].isoformat(),
+        'operator': row['id_operator']
+    }, rows)))
+
 
 @app.route('/add_blacklist', methods=['POST'])
 @limiter.limit("5000 per day")
@@ -128,5 +144,4 @@ def delete_user():
 
 
 if __name__ == "__main__":
-    #app.run(debug=True , host='0.0.0.0')
-    app.run(debug=False, host='localhost')
+    app.run(debug=Config.DEBUG, host='localhost')
