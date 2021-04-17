@@ -1,0 +1,11 @@
+summary: hi function
+description: hi function description
+
+tags:
+  - general
+
+responses:
+  200:
+    description: Hi response
+    schema:
+      type: string  
