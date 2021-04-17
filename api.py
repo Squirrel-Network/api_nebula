@@ -25,6 +25,27 @@ limiter = Limiter(
     default_limits=["150 per minute", "2 per second"],
 )
 
+
+# setup defaults
+defaults_values = {
+    'PAGE_SIZE_DEFAULT': 50,
+    'PAGE_SIZE_MAX': 200
+}
+
+for k in defaults_values:
+    app.logger.warn('check %s', k)
+    if not app.config.get(k, None):
+        app.logger.warn('adding %s', k)
+        app.config[k] = defaults_values[k]
+
+
+def get_limit():
+    limit = request.args.get('limit', app.config['PAGE_SIZE_DEFAULT'], type=int)
+    if limit > app.config['PAGE_SIZE_MAX']:
+        limit = app.config['PAGE_SIZE_MAX']
+
+    return limit
+
 #############
 ### Home ###
 ############
@@ -66,7 +87,8 @@ def blacklist():
 @limiter.limit("10/seconds")
 @auth.auth_required()
 def get_blacklist():
-    limit = request.args.get('limit', 100, type=int)
+    limit = get_limit()
+
     rows = SuperbanRepository().getAll([limit])
 
     return jsonify(list(map(lambda row: {
@@ -106,7 +128,11 @@ def add_blacklist():
 @limiter.limit("10/seconds")
 @auth.auth_required()
 def users():
-    limit = request.args.get('limit', 50, type=int)
+    limit = get_limit()
+
+    if limit > 100:
+        limit = 100
+
     rows = UserRepository().getAll([limit])
 
     return jsonify(list(map(lambda row: {
