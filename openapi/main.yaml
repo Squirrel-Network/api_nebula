@@ -1,0 +1,11 @@
+info:
+  title: Nebula Api specs
+  description: Specification for nebula API 
+  version: 0.2
+
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 

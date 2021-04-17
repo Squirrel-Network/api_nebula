@@ -1,6 +1,7 @@
 # encoding: utf-8
 from datetime import datetime, timedelta
 from functools import wraps
+from flasgger import swag_from
 
 from flask import Flask, request
 import jwt
@@ -15,6 +16,7 @@ class _Auth:
         config_token = app.config['TOKEN'] or ''
         app.config['TOKENS'] = [t.strip() for t in config_token.split(',') if t]
 
+        @swag_from('./openapi/auth.yaml')
         @app.route('/authenticate', methods=['POST'])
         def authenticate():
             token = None

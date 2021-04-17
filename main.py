@@ -5,6 +5,7 @@ from flask.json import jsonify
 from config import Config
 from core.database.repository.superban import SuperbanRepository
 from flask import Flask, request,render_template
+from flasgger import Swagger
 from core.utilities.limiter import limiter
 from core.utilities.auth_manager import auth
 from core.api.test import api_test
@@ -19,6 +20,13 @@ CORS(app)
 
 limiter.init_app(app)
 auth.init_app(app)
+
+swagger = Swagger(app,
+    template_file='./openapi/main.yaml',
+    merge=True,
+    config={
+        'openapi': '3.0.0',
+    })
 
 #############
 ### Home ###
