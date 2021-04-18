@@ -1,4 +1,4 @@
-from database.db_connect import Connection
+from core.database.db_connect import Connection
 from pypika import Query, Table
 
 superban = Table("superban_table")

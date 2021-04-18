@@ -16,7 +16,7 @@ services:
       DB_DATABASE: nebula
       DB_USERNAME: root
       DB_PASSWORD: io
-      FLASK_APP: api.py
+      FLASK_APP: main.py
     ports:
       - 5000:5000
     depends_on:
