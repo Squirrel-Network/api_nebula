@@ -21,7 +21,7 @@ def check_blacklist(tg_id):
     else:
         return ({'error': 'The user was not superbanned or you entered an incorrect id'})
 
-
+# TODO Error 500 Problem
 @api_blacklist.route('/blacklist', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
