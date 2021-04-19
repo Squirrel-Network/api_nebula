@@ -21,14 +21,15 @@ def check_blacklist(tg_id):
     else:
         return ({'error': 'The user was not superbanned or you entered an incorrect id'})
 
-# TODO Error 500 Problem
 @api_blacklist.route('/blacklist', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 @auth.auth_required()
 def blacklist():
     limit = get_limit(api_blacklist)
-
+    countsb = SuperbanRepository().getCountSuperBanned()
+    total = countsb['counter']
+    print(total)
     rows = SuperbanRepository().getAll([limit])
 
     return jsonify(list(map(lambda row: {
@@ -39,7 +40,7 @@ def blacklist():
         'operator': row['id_operator']
     }, rows)))
 
-
+#TODO Auth Problem
 @api_blacklist.route('/add_blacklist', methods=['POST'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")

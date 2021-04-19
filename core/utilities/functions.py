@@ -1,8 +1,8 @@
-from flask import Flask, request
+from flask import current_app, request
 
-def get_limit(app: Flask):
-    limit = request.args.get('limit', app.config['PAGE_SIZE_DEFAULT'], type=int)
-    if limit > app.config['PAGE_SIZE_MAX']:
-        limit = app.config['PAGE_SIZE_MAX']
+def get_limit(app):
+    limit = request.args.get('limit', current_app.config['PAGE_SIZE_DEFAULT'], type=int)
+    if limit > current_app.config['PAGE_SIZE_MAX']:
+        limit = current_app.config['PAGE_SIZE_MAX']
 
     return limit

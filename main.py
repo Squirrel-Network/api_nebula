@@ -4,7 +4,6 @@ import datetime
 from flask.json import jsonify
 from config import Config
 from core.database.repository.superban import SuperbanRepository
-from core.database.repository.users import UserRepository
 from flask import Flask, request,render_template
 from core.utilities.limiter import limiter
 from core.utilities.auth_manager import auth

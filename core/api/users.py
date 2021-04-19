@@ -6,7 +6,6 @@ from core.database.repository.users import UserRepository
 
 api_users = Blueprint('api_users', __name__)
 
-# TODO Error 500 Problem
 @api_users.route('/users', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
