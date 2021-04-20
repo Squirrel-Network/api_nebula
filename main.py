@@ -39,7 +39,7 @@ app.register_blueprint(api_users, url_prefix='/v1')
 # setup defaults
 defaults_values = {
     'PAGE_SIZE_DEFAULT': 50,
-    'PAGE_SIZE_MAX': 200
+    'PAGE_SIZE_MAX': 1000
 }
 
 for k in defaults_values:
