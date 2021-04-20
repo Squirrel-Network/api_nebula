@@ -23,7 +23,7 @@ requestBody:
 
 responses:
   200:
-    description: Hi response
+    description: Autentication ok 
     content:
       application/json:
         schema:
@@ -31,9 +31,9 @@ responses:
           properties:
             token:
               type: string
+              description: bearer jwt token
         example:
-          value:
-            token: "ejy......"
+          token: "eyj......"
     
   403:
     description: invalid auth token
@@ -45,5 +45,4 @@ responses:
             error:
               type: string
         example:
-          value:
-            error: "not authorized"
+          error: "not authorized"

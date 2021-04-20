@@ -21,11 +21,16 @@ CORS(app)
 limiter.init_app(app)
 auth.init_app(app)
 
-swagger = Swagger(app,
+Swagger(app,
     template_file='./openapi/main.yaml',
     merge=True,
     config={
+        'title': 'Nebula API specs',
         'openapi': '3.0.0',
+        'specs': [{
+            'endpoint': 'openapi/specs',
+            'route': '/openapi/specs.json'
+        }],
     })
 
 #############

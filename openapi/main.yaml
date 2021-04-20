@@ -8,4 +8,8 @@ components:
     bearerAuth:            # arbitrary name for the security scheme
       type: http
       scheme: bearer
-      bearerFormat: JWT 
+      bearerFormat: JWT
+
+paths:
+  /ping:
+    summary: ping
