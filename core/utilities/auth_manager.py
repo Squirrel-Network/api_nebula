@@ -16,7 +16,7 @@ class _Auth:
         config_token = app.config['TOKEN'] or ''
         app.config['TOKENS'] = [t.strip() for t in config_token.split(',') if t]
 
-        @swag_from('./openapi/auth.yaml')
+        @swag_from('../../openapi/auth.yaml')
         @app.route('/authenticate', methods=['POST'])
         def authenticate():
             token = None
