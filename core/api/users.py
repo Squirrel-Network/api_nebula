@@ -43,7 +43,8 @@ def users():
             return {'id': row['id'],
             'tg_id': row['tg_id'],
             'username': row['tg_username'],
-            'warn': row['warn_count']}
+            'created_at': row['created_at'],
+            'updated_at': row['updated_at']}
         else:
             return {'error': 'You have entered an username that does not exist or you have entered incorrect data'}
 
@@ -65,7 +66,8 @@ def users():
             'id': row['id'],
             'tg_id': row['tg_id'],
             'username': row['tg_username'],
-            'warn': row['warn_count'],
+            'created_at': row['created_at'],
+            'updated_at': row['updated_at'],
         }, rows)))
 
 @api_users.route('/users/<int:tg_id>', methods=['GET'])
@@ -78,7 +80,8 @@ def user_by_id(tg_id):
         return {'id': row['id'],
         'tg_id': row['tg_id'],
         'username': row['tg_username'],
-        'warn': row['warn_count']}
+        'created_at': row['created_at'],
+        'updated_at': row['updated_at']}
     else:
         return {'error': 'You have entered an id that does not exist or you have entered incorrect data'}
 
