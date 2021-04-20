@@ -27,6 +27,7 @@ def check_blacklist(tg_id):
 @auth.auth_required()
 def blacklist():
     limit = get_limit(api_blacklist)
+    print(limit)
     countsb = SuperbanRepository().getCountSuperBanned()
     total = countsb['counter']
     print(total)

@@ -35,6 +35,11 @@ class UserRepository(Connection):
         q = "UPDATE users SET tg_username = %s WHERE tg_id = %s"
         return self._update(q,args)
 
+    def getCountUsers(self):
+        q = 'SELECT COUNT(*) AS counter FROM users'
+
+        return self._select(q)
+
     def deleteUser(self, args=None):
         q = "DELETE FROM users WHERE tg_id = %s"
         print(args)
