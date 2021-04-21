@@ -8,10 +8,9 @@ def get_limit(app):
 
     return limit
 
-def get_paginated_list(results, url, start, limit):
+def get_paginated_list(results, url, start, limit, count):
     start = int(start)
     limit = int(limit)
-    count = len(results)
     if count < start or limit < 0:
         abort(404)
     # make response

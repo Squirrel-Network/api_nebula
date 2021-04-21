@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 from core.utilities.auth_manager import auth
 from core.utilities.limiter import limiter
 from core.database.repository.superban import SuperbanRepository
-from core.utilities.functions import get_limit
+from core.utilities.functions import get_limit, get_paginated_list
 
 api_blacklist = Blueprint('api_blacklist', __name__)
 
@@ -26,20 +26,26 @@ def check_blacklist(tg_id):
 @limiter.limit("10/seconds")
 @auth.auth_required()
 def blacklist():
-    limit = get_limit(api_blacklist)
-    print(limit)
-    countsb = SuperbanRepository().getCountSuperBanned()
-    total = countsb['counter']
-    print(total)
-    rows = SuperbanRepository().getAll([limit])
-
-    return jsonify(list(map(lambda row: {
-        'id': row['id'],
-        'tg_id': row['user_id'],
-        'motivation': row['motivation_text'],
-        'date': row['user_date'].isoformat(),
-        'operator': row['id_operator']
-    }, rows)))
+    start= request.args.get('start', 1, type=int)
+    limit= request.args.get('limit', 20, type=int)
+    data_start = (start,limit)
+    rows = SuperbanRepository().getAll(data_start)
+    countbl = SuperbanRepository().getCountSuperBanned()
+    total = countbl['counter']
+    data = list(map(lambda row: {
+            'id': row['id'],
+            'tg_id': row['user_id'],
+            'reason': row['motivation_text'],
+            'date': row['user_date'].isoformat(),
+            'operator': row['id_operator'],
+        }, rows))
+    return jsonify(get_paginated_list(
+        data,
+        '/page',
+        start,
+        limit,
+        total
+        ))
 
 #TODO Auth Problem
 @api_blacklist.route('/add_blacklist', methods=['POST'])
@@ -55,9 +61,9 @@ def add_blacklist():
     row = SuperbanRepository().getById([user_id])
     if user_id is not None and user_id != "" and motivation is not None and motivation != "" and operator_id is not None and operator_id != "":
         if row:
-            return {'response': 'The user has already been blacklisted'}
+            return {'error': 'The user has already been blacklisted'}
         else:
             SuperbanRepository().add(data)
             return {'response': 'User successfully blacklisted'}
     else:
-        return {'response': 'Missing Parameters'}
+        return {'error': 'Missing Parameters'}

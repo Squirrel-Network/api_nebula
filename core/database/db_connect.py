@@ -23,6 +23,7 @@ class Connection:
         return self.sel
 
     def _selectAll(self,sql,args=None):
+        print(args)
         self.cur.execute(sql,args)
         self.sel = self.cur.fetchall()
         self.cur.close()

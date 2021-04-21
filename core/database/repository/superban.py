@@ -11,7 +11,7 @@ class SuperbanRepository(Connection):
         return self._select(q, args)
 
     def getAll(self, args=None):
-        q = "SELECT * FROM superban_table LIMIT %s"
+        q = "SELECT * FROM superban_table LIMIT %s,%s"
 
         return self._selectAll(q, args)
 

@@ -6,36 +6,26 @@ from core.database.repository.users import UserRepository
 
 api_users = Blueprint('api_users', __name__)
 
-@api_users.route('/paginationtest/page')
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
-@auth.auth_required()
-def view():
-    data = [{'telegram_id': i+1} for i in range(1000)]
-    return jsonify(get_paginated_list(
-        data,
-        '/events/page',
-        start=request.args.get('start', 1),
-        limit=request.args.get('limit', 20)
-        ))
-
 @api_users.route('/users', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 @auth.auth_required()
 def users():
-    start = 10
-    limit = get_limit(api_users)
-    countus = UserRepository().getCountUsers()
-    total = countus['counter']
     username = request.args.get('username',type=str)
     order_by = request.args.get('orderby',type=int)
-
-    #if limit > 100:
-        #limit = 200
-    print(start)
-    print(limit)
-    print(total)
+    start= request.args.get('start', 1, type=int)
+    limit= request.args.get('limit', 20, type=int)
+    data_start = (start,limit)
+    rows = UserRepository().getAll(data_start)
+    countuser = UserRepository().getCountUsers()
+    total = countuser['counter']
+    data = list(map(lambda row: {
+            'id': row['id'],
+            'tg_id': row['tg_id'],
+            'username': row['tg_username'],
+            'created_at': row['created_at'],
+            'updated_at': row['updated_at'],
+        }, rows))
 
     if username is not None and username != "":
         row = UserRepository().getByUsername(username)
@@ -48,7 +38,6 @@ def users():
         else:
             return {'error': 'You have entered an username that does not exist or you have entered incorrect data'}
 
-    rows = UserRepository().getAll([limit])
     if order_by == 1:
         print("ASC")
         return {'response': 'ASC'}
@@ -62,13 +51,13 @@ def users():
         print("Order by tgid")
         return {'response': 'Order by tgid'}
     else:
-        return jsonify(list(map(lambda row: {
-            'id': row['id'],
-            'tg_id': row['tg_id'],
-            'username': row['tg_username'],
-            'created_at': row['created_at'],
-            'updated_at': row['updated_at'],
-        }, rows)))
+        return jsonify(get_paginated_list(
+        data,
+        '/page',
+        start,
+        limit,
+        total
+        ))
 
 @api_users.route('/users/<int:tg_id>', methods=['GET'])
 @limiter.limit("5000 per day")
@@ -96,4 +85,4 @@ def delete_user(tg_id):
         UserRepository().deleteUser(data)
         return {'response': 'User successfully deleted'}
     else:
-        return {'response': 'There is no user with this id to delete'}
+        return {'error': 'There is no user with this id to delete'}
