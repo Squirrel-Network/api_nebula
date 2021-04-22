@@ -9,7 +9,9 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
-paths:
-  /ping:
-    summary: ping
+  schemas:
+    NotAuthorizedResponse:
+      type: object
+      properties:
+        error:
+          type: string

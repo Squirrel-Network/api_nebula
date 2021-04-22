@@ -1,0 +1,20 @@
+summary: list of all users 
+description: list of all users 
+
+tags:
+  - users
+
+produces:
+        - application/json
+responses:
+  200:
+    description: user list
+    schema:
+      type: string
+  401:
+    description: not authorized
+    schema:
+      type: object
+      properties:
+        error:
+          type: string

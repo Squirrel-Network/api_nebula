@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, abort
+from flasgger import swag_from
 from core.utilities.auth_manager import auth
 from core.utilities.limiter import limiter
 from core.utilities.functions import get_limit, get_paginated_list
@@ -10,6 +11,7 @@ api_users = Blueprint('api_users', __name__)
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 @auth.auth_required()
+@swag_from('../../openapi/users_list.yaml')
 def users():
     username = request.args.get('username',type=str)
     order_by = request.args.get('orderby',type=int)
