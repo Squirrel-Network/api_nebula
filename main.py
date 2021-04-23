@@ -56,9 +56,7 @@ defaults_values = {
 }
 
 for k in defaults_values:
-    print('check %s', k)
     if not app.config.get(k, None):
-        print('adding %s', k)
         app.config[k] = defaults_values[k]
 
 if __name__ == "__main__":
