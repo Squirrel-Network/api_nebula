@@ -67,10 +67,10 @@ def users():
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 @auth.auth_required()
-@swag_from('../../openapi/users_list.yaml')
+@swag_from('../../openapi/users_list2.yaml')
 def users2():
     params = get_pagination_headers()
-    params['tg_username'] = request.args.get('username', None, type=str)
+    params['tg_username'] = request.args.get('tg_username', None, type=str)
 
     rows = UserRepository().get_all(**params)
     count = UserRepository().count(**params)
@@ -95,7 +95,7 @@ def user_by_id(tg_id):
     if row:
         return {'id': row['id'],
         'tg_id': row['tg_id'],
-        'username': row['tg_username'],
+        'tg_username': row['tg_username'],
         'created_at': row['created_at'],
         'updated_at': row['updated_at']}
     else:

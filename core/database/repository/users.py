@@ -71,7 +71,7 @@ class UserRepository(Connection):
         return query
 
     def _apply_order_by(self, query: Query, **parameters):
-        valid_order_fields = ['tg_username' , 'tg_id', 'created_at', 'updated_at']
+        valid_order_fields = ['id', 'tg_username' , 'tg_id', 'created_at', 'updated_at']
         order_by = parameters.get('@order_field', None)
 
 

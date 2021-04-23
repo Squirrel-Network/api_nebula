@@ -1,0 +1,116 @@
+summary: list of all users
+description: list of all users
+security:
+  - bearerAuth: []
+
+parameters:
+  - in: query
+    name: tg_username
+    schema:
+      type: string
+    description: text search by tg_username, not requires
+  - in: query
+    name: start
+    schema:
+      type: integer
+      default: 0
+    description: first record to show, 0 if missing
+  - in: query
+    name: limit
+    schema:
+      type: integer
+    description: number of record to show
+  - in: query
+    name: order_by
+    schema:
+      type: string
+      enum: ['id', 'tg_username' , 'tg_id', 'created_at', 'updated_at']
+    description: field to sort by
+  - in: query
+    name: order_dir
+    schema:
+      type: string
+      enum: ['asc', 'desc']
+      default: 'asc'
+    description: sort order
+  
+
+tags:
+  - users
+
+produces:
+        - application/json
+responses:
+  200:
+    description: user list
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            metadata:
+              type: object
+              properties:
+                total:
+                  type: integer
+                  example: 232
+                start:
+                  type: integer
+                  description: zero based starting record to show
+                  example: 40
+                limit:
+                  description: max number of element to show
+                  type: integer
+                  example: 20
+                next:
+                  type: string
+                  description: parameters of next page
+                  example: '?start=60&limit=20'
+                previous:
+                  type: string
+                  description: parameters of previous page
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  tg_id:
+                    type: string
+                  tg_username:
+                    type: string
+                  created_at:
+                    type: datetime
+                  updated_at:
+                    type: datetime
+        example:
+          metadata:
+            total: 232
+            start: 40
+            limit: 20
+            next: '?start=60&limit=20'
+            previous: '?start=20&limit=20'
+          results:
+            - id: 22
+              tg_id: '2323423432'
+              tg_username: '@pippo'
+              created_at: '2021-01-22T21:05:32'
+              updated_at: '2021-01-25T21:05:32'
+            - id: 33
+              tg_id: '45634643'
+              tg_username: '@lucy'
+              created_at: '2021-01-22T21:05:32'
+              updated_at: '2021-01-25T21:05:32'
+ 
+  401:
+    description: not authorized
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+        example:
+          error: not authorized
