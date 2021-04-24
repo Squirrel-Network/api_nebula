@@ -10,8 +10,17 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    NotAuthorizedResponse:
+    ErrorSchema:
       type: object
       properties:
         error:
           type: string
+  responses:
+    NotAuthorizedResponse:
+      description: 'not authorized, invalid or missing token'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorSchema'
+          example:
+            error: not authorized

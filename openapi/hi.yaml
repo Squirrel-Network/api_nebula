@@ -7,5 +7,12 @@ tags:
 responses:
   200:
     description: Hi response
-    schema:
-      type: string  
+    content:
+      application/json:
+        schema:
+          type: object
+          properies:
+            status:
+              type: string
+        example:
+          status: 'hi!'
