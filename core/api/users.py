@@ -2,10 +2,11 @@ from flask import Blueprint, request, jsonify, abort
 from flasgger import swag_from
 from core.utilities.auth_manager import auth
 from core.utilities.limiter import limiter
-from core.utilities.functions import get_pagination_headers, get_paginated_list, get_paginated_response
+from core.utilities.functions import get_pagination_headers, format_iso_date, get_paginated_response
 from core.database.repository.users import UserRepository
 
 api_users = Blueprint('api_users', __name__)
+
 
 @api_users.route('/users', methods=['GET'])
 @limiter.limit("5000 per day")
@@ -20,12 +21,12 @@ def users2():
     count = UserRepository().count(**params)
 
     data = list(map(lambda row: {
-            'id': row['id'],
-            'tg_id': row['tg_id'],
-            'tg_username': row['tg_username'],
-            'created_at': row['created_at'].isoformat(),
-            'updated_at': row['updated_at'].isoformat(),
-        }, rows))
+        'id': row['id'],
+        'tg_id': row['tg_id'],
+        'tg_username': row['tg_username'],
+        'created_at': format_iso_date(row['created_at']),
+        'updated_at': format_iso_date(row['updated_at']),
+    }, rows))
 
     return get_paginated_response(data, count, params)
 
@@ -37,13 +38,17 @@ def users2():
 def user_by_id(tg_id):
     row = UserRepository().getById([tg_id])
     if row:
-        return {'id': row['id'],
-        'tg_id': row['tg_id'],
-        'tg_username': row['tg_username'],
-        'created_at': row['created_at'],
-        'updated_at': row['updated_at']}
+        return {
+            'id': row['id'],
+            'tg_id': row['tg_id'],
+            'tg_username': row['tg_username'],
+            'created_at': format_iso_date(row['created_at']),
+            'updated_at': format_iso_date(row['updated_at']),
+        }
     else:
-        return {'error': 'You have entered an id that does not exist or you have entered incorrect data'}
+        return {
+            'error': 'You have entered an id that does not exist or you have entered incorrect data'
+        }
 
 
 @api_users.route('/users/delete_user/<int:tg_id>', methods=['DELETE'])

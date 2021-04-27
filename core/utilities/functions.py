@@ -1,4 +1,5 @@
 from flask import current_app, request, abort
+from datetime import datetime
 
 def get_limit():
     limit = request.args.get('limit', current_app.config['PAGE_SIZE_DEFAULT'], type=int)
@@ -71,3 +72,12 @@ def get_paginated_list(results, url, start, limit, count):
     # finally extract result according to bounds
     obj['results'] = results[(start - 1):(start - 1 + limit)]
     return obj
+
+
+def format_iso_date(d):
+    """
+    If the parameter is datetime format as iso, otherwise returns the same value
+    """
+    if type(d) is datetime:
+        return d.isoformat()
+    return d
