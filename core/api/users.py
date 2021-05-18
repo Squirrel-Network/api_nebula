@@ -13,7 +13,7 @@ api_users = Blueprint('api_users', __name__)
 @limiter.limit("10/seconds")
 @auth.auth_required()
 @swag_from('../../openapi/users_list.yaml')
-def users2():
+def users():
     params = get_pagination_headers()
     params['tg_username'] = request.args.get('tg_username', None, type=str)
 
