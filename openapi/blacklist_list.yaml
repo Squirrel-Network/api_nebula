@@ -1,0 +1,118 @@
+summary: list of blacklisted users
+description: list of blacklisted users
+security:
+  - bearerAuth: []
+
+parameters:
+  - in: query
+    name: user_id
+    schema:
+      type: int
+    description: text search by banned user_id, not required
+  - in: query
+    name: motivation_text
+    schema:
+      type: string
+    description: text search by motivation_text, not required
+  - in: query
+    name: id_operator
+    schema:
+      type: int
+    description: text search by id_operator, not required
+  - in: query
+    name: start
+    schema:
+      type: integer
+      default: 0
+    description: first record to show, 0 if missing
+  - in: query
+    name: limit
+    schema:
+      type: integer
+    description: number of record to show
+  - in: query
+    name: order_by
+    schema:
+      type: string
+      enum: ['id', 'user_id', 'motivation_text', 'user_date', 'id_operator']
+    description: field to sort by
+  - in: query
+    name: order_dir
+    schema:
+      type: string
+      enum: ['asc', 'desc']
+      default: 'asc'
+    description: sort order
+
+tags:
+  - blacklist
+
+produces:
+        - application/json
+responses:
+  200:
+    description: blacklisted user list
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            metadata:
+              type: object
+              properties:
+                total:
+                  type: integer
+                  example: 232
+                start:
+                  type: integer
+                  description: zero based starting record to show
+                  example: 40
+                limit:
+                  description: max number of element to show
+                  type: integer
+                  example: 20
+                next:
+                  type: string
+                  description: parameters of next page
+                  example: '?start=60&limit=20'
+                previous:
+                  type: string
+                  description: parameters of previous page
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  user_id:
+                    type: string
+                  motivation_text:
+                    type: string
+                  user_date:
+                    type: datetime
+                  id_operator:
+                    type: string
+        example:
+          metadata:
+            total: 232
+            start: 40
+            limit: 20
+            next: '?start=60&limit=20'
+            previous: '?start=20&limit=20'
+          results:
+            - id: 22
+              user_id: '2323423432'
+              motivation_text: 'Spam'
+              user_date: '2021-01-22T21:05:32'
+              id_operator: '123412341233'
+            - id: 33
+              user_id: '45634643'
+              motivation_text: 'Userbot'
+              user_date: '2021-01-22T21:05:32'
+              id_operator: '123412341233'
+ 
+  401:
+    $ref: '#/components/responses/NotAuthorizedResponse'
+    #$ref: main.yaml#/components/responses/NotAuthorizedResponse
+

@@ -1,0 +1,18 @@
+summary: hi function
+description: hi function description
+
+tags:
+  - general
+
+responses:
+  200:
+    description: Hi response
+    content:
+      application/json:
+        schema:
+          type: object
+          properies:
+            status:
+              type: string
+        example:
+          status: 'hi!'
