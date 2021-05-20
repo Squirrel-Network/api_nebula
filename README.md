@@ -1,6 +1,6 @@
 # NEBULA API
 
-## How to start
+## How to start with Linux
 - Clone this repository
 `git clone https://github.com/Squirrel-Network/api_nebula`
 
@@ -13,11 +13,8 @@
 - Install requirements
 `pip install -r requirements.txt`
 
-- `python3 api.py`
+- `python3 main.py`
 
-## API Endpoints
-### URL = https://api.nebula.squirrel-network.online (example.com)
-- BLACKLIST: `example.com/blacklist?tgid=123456789 (Public API) ==>` <a href="https://api.nebula.squirrel-network.online/blacklist?tgid=1437875660">Click Here</a>
-- USERS: `example.com/users?limit=10&token=XXXXXXX (Private API)`
-- USER: `example.com/user?tgid=123456789&token=XXXXXXX (Private API)`
-- DELETE USER: `example.com/delete_user?tgid=123456789&token=XXXXXXX (Private API)`
+## API documentation
+
+- https://api.nebula.squirrel-network.online/apidocs/
