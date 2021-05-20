@@ -33,7 +33,7 @@ def blacklist():
     params['user_id'] = request.args.get('user_id', None, type=int)
     params['motivation_text'] = request.args.get('motivation_text', None, type=str)
     params['id_operator'] = request.args.get('id_operator', None, type=int)
- 
+
     rows = SuperbanRepository().get_all(**params)
     count = SuperbanRepository().count(**params)
 
