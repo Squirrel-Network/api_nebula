@@ -1,4 +1,5 @@
-from flask import current_app, request, abort
+from flask import current_app, request, Response, jsonify
+from werkzeug.exceptions import abort
 from datetime import datetime
 
 def get_limit():
@@ -81,3 +82,9 @@ def format_iso_date(d):
     if type(d) is datetime:
         return d.isoformat()
     return d
+
+def validation_error_response_handler(err, data, schema):
+    #return { 'error': str(err)}, 400
+    current_app.logger.warn('sdads')
+    abort(Response(jsonify({'error': str(err), 'data': data, 'schema': schema}),status = 400))
+    #abort({ 'error': str(err)}, 400)

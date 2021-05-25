@@ -15,6 +15,12 @@ components:
       properties:
         error:
           type: string
+    StatusSchema:
+      type: object
+      properties:
+        status:
+          type: string
+
   responses:
     NotAuthorizedResponse:
       description: 'not authorized, invalid or missing token'
@@ -24,3 +30,11 @@ components:
             $ref: '#/components/schemas/ErrorSchema'
           example:
             error: not authorized
+    OkResponse:
+      description: 'operation successful'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StatusSchema'
+          example:
+            status: ok
