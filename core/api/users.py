@@ -35,6 +35,7 @@ def users():
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 @auth.auth_required()
+@swag_from('../../openapi/users_get.yaml')
 def user_by_id(tg_id):
     row = UserRepository().getById([tg_id])
     if row:
@@ -48,18 +49,19 @@ def user_by_id(tg_id):
     else:
         return {
             'error': 'You have entered an id that does not exist or you have entered incorrect data'
-        }
+        }, 404
 
 
-@api_users.route('/users/delete_user/<int:tg_id>', methods=['DELETE'])
+@api_users.route('/users/<int:tg_id>', methods=['DELETE'])
 @limiter.limit("500 per day")
 @limiter.limit("2/seconds")
 @auth.auth_required()
+@swag_from('../../openapi/users_delete.yaml')
 def delete_user(tg_id):
     row = UserRepository().getById([tg_id])
     if row:
         data = [(tg_id)]
         UserRepository().deleteUser(data)
-        return {'response': 'User successfully deleted'}
+        return {'status': 'ok'}
     else:
-        return {'error': 'There is no user with this id to delete'}
+        return {'error': 'No user found' }, 404

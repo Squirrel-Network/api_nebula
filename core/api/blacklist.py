@@ -53,7 +53,7 @@ def list_blacklist():
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 @auth.auth_required()
-@swag_from('../../openapi/blacklist_add.yaml', validation=True, validation_error_handler=validation_error_response_handler)
+@swag_from('../../openapi/blacklist_add.yaml')
 def add_blacklist():
     request_data = request.get_json()
     user_id = request_data.get('user_id', None)
