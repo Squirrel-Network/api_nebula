@@ -21,7 +21,7 @@ def get_blacklist(tg_id):
         'date': row['user_date'].isoformat(), # TODO: manage dates in serializer
         'operator': row['id_operator']}
     else:
-        return ({'error': 'The user was not superbanned or you entered an incorrect id'})
+        return ({ 'error': 'The user was not superbanned or you entered an incorrect id' }, 404)
 
 @api_blacklist.route('/blacklist', methods=['GET'])
 @limiter.limit("5000 per day")
