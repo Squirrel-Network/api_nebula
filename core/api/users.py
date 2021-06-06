@@ -62,6 +62,6 @@ def delete_user(tg_id):
     if row:
         data = [(tg_id)]
         UserRepository().deleteUser(data)
-        return {'status': 'ok'}
+        return { 'status': 'ok' }
     else:
-        return {'error': 'No user found' }, 404
+        return { 'error': 'No user found' }, 404
