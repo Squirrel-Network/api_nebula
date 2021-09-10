@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright SquirrelNetwork
 from flask import Blueprint, request, jsonify, abort
 from flasgger import swag_from
 from core.utilities.auth_manager import auth

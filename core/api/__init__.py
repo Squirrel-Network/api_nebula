@@ -1,3 +1,3 @@
-__all__ = ["blacklist","test","users"]
+__all__ = ["blacklist","community","groups","test","users"]
 
 from core.api import *

@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright SquirrelNetwork
 from flask import current_app, request, Response, jsonify
 from werkzeug.exceptions import abort
 from datetime import datetime

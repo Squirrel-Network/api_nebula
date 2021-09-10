@@ -1,4 +1,7 @@
-# encoding: utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright SquirrelNetwork
 from datetime import datetime, timedelta
 from functools import wraps
 from flasgger import swag_from
