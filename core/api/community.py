@@ -12,3 +12,9 @@ api_community = Blueprint('api_community', __name__)
 @limiter.limit("5/seconds")
 def community():
     return { "status": "Under Construction" }
+
+@api_community.route('/top_community', methods=['GET'])
+@limiter.limit("5000 per day")
+@limiter.limit("10/seconds")
+def top_ten_community():
+    return { "status": "Under Construction" }
