@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from core.utilities.limiter import limiter
+from core.database.repository.community import CommunityRepository
 
 api_community = Blueprint('api_community', __name__)
 
@@ -17,4 +18,12 @@ def community():
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 def top_ten_community():
-    return { "status": "Under Construction" }
+    rows = CommunityRepository().top_ten_communities()
+    return jsonify(list(map(lambda row: {
+        'tg_group_id': row['tg_group_id'],
+        'tg_group_name': row['group_name'],
+        'tg_group_link': row['tg_group_link'],
+        'language': row['language'],
+        'chat_type': row['type'],
+        'total_message': row['counter']
+    }, rows)))

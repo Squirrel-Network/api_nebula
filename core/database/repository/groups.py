@@ -22,6 +22,6 @@ class GroupRepository(Connection):
         return self._selectAll(q)
 
     def top_ten_groups(self, args=None):
-        q = 'SELECT nu.tg_group_id,gr.group_name,COUNT(nu.update_id) AS counter FROM nebula_updates nu INNER JOIN groups gr ON gr.id_group = nu.tg_group_id GROUP BY nu.tg_group_id ORDER BY counter DESC LIMIT 10'
+        q = 'SELECT nu.tg_group_id,gr.group_name,COUNT(nu.update_id) AS counter FROM nebula_updates nu INNER JOIN groups gr ON gr.id_group = nu.tg_group_id WHERE nu.tg_group_id NOT IN (-1001267698171) GROUP BY nu.tg_group_id ORDER BY counter DESC LIMIT 10'
 
         return self._selectAll(q)
