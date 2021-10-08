@@ -23,6 +23,7 @@ def top_ten_community():
         'tg_group_id': row['tg_group_id'],
         'tg_group_name': row['group_name'],
         'tg_group_link': row['tg_group_link'],
+        'group_photo': row['group_photo'],
         'language': row['language'],
         'chat_type': row['type'],
         'total_message': row['counter']

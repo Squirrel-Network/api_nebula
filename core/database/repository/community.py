@@ -22,6 +22,6 @@ class CommunityRepository(Connection):
         return self._selectAll(q)
 
     def top_ten_communities(self, args=None):
-        q = "SELECT nu.tg_group_id,gr.group_name,co.tg_group_link,co.language,co.type,COUNT(nu.update_id) AS counter FROM nebula_updates nu INNER JOIN groups gr ON gr.id_group = nu.tg_group_id INNER JOIN community co ON co.tg_group_id = gr.id_group WHERE nu.tg_group_id NOT IN (-1001267698171)AND gr.community = 1 GROUP BY nu.tg_group_id ORDER BY counter DESC LIMIT 50"
+        q = "SELECT nu.tg_group_id,gr.group_name,co.tg_group_link,gr.group_photo,co.language,co.type,COUNT(nu.update_id) AS counter FROM nebula_updates nu INNER JOIN groups gr ON gr.id_group = nu.tg_group_id INNER JOIN community co ON co.tg_group_id = gr.id_group WHERE nu.tg_group_id NOT IN (-1001267698171)AND gr.community = 1 GROUP BY nu.tg_group_id ORDER BY counter DESC LIMIT 50"
 
         return self._selectAll(q)
