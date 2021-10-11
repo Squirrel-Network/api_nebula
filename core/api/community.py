@@ -26,5 +26,6 @@ def top_ten_community():
         'group_photo': row['group_photo'],
         'language': row['language'],
         'chat_type': row['type'],
+        'total_users': row['total_users'],
         'total_message': row['counter']
     }, rows)))
