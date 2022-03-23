@@ -59,7 +59,6 @@ def users_search():
         return render_template("users.html", data = data)
     else:
         return render_template("users.html")
-    
 
 
 ####################
