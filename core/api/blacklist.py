@@ -1,5 +1,5 @@
 import datetime
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flasgger import swag_from
 from core.utilities.auth_manager import auth
 from core.utilities.limiter import limiter

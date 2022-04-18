@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-import datetime
-from flask.json import jsonify
 from config import Config
 from core.database.repository.superban import SuperbanRepository
 from core.database.repository.users import UserRepository
@@ -16,6 +14,7 @@ from core.api.blacklist import api_blacklist
 from core.api.users import api_users
 from core.api.community import api_community
 from core.api.groups import api_groups
+from core.api.bot_service import api_bot_service
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -69,6 +68,7 @@ app.register_blueprint(api_blacklist, url_prefix='/v1')
 app.register_blueprint(api_users, url_prefix='/v1')
 app.register_blueprint(api_community, url_prefix='/v1')
 app.register_blueprint(api_groups, url_prefix='/v1')
+app.register_blueprint(api_bot_service, url_prefix='/v1')
 
 # setup defaults
 defaults_values = {

@@ -19,3 +19,7 @@ class Config(object):
      TOKEN = 'INSERT TOKEN HERE'
      SECRET = 'INSERT APP SECRET HERE'
      TOKEN_DURATION_MINUTES = 30
+     ###############################
+     ####   TELEGRAM SETTINGS   ####
+     ###############################
+     BOT_TOKEN = 'INSERT BOT TOKEN HERE'
