@@ -3,6 +3,7 @@
 
 # Copyright SquirrelNetwork
 from flask import Blueprint, jsonify
+from flasgger import swag_from
 from core.utilities.limiter import limiter
 from core.database.repository.groups import GroupRepository
 
@@ -17,6 +18,7 @@ def groups():
 @api_groups.route('/top_groups', methods=['GET'])
 @limiter.limit("6000 per day")
 @limiter.limit("10/seconds")
+@swag_from('../../openapi/top_groups_list.yaml')
 def groups_top_ten():
     rows = GroupRepository().top_ten_groups()
     return jsonify(list(map(lambda row: {

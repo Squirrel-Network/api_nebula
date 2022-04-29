@@ -6,6 +6,7 @@ import requests
 import urllib.request
 from config import Config
 from flask import Blueprint, request
+from flasgger import swag_from
 from core.utilities.limiter import limiter
 from core.utilities.auth_manager import auth
 
@@ -24,6 +25,7 @@ def ApiMessage(text, chat_id):
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
 @auth.auth_required()
+@swag_from('../../openapi/message_post.yaml')
 def send_message():
     message = request.args.get('text')
     chat_id = request.args.get('chatid')

@@ -3,6 +3,7 @@
 
 # Copyright SquirrelNetwork
 from flask import Blueprint, request, jsonify
+from flasgger import swag_from
 from core.utilities.limiter import limiter
 from core.database.repository.community import CommunityRepository
 
@@ -17,6 +18,7 @@ def community():
 @api_community.route('/top_community', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
+@swag_from('../../openapi/top_community_list.yaml')
 def top_ten_community():
     rows = CommunityRepository().top_ten_communities()
     return jsonify(list(map(lambda row: {
