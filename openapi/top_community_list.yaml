@@ -1,0 +1,47 @@
+summary: Statistics about the top communitis 
+description: Statistics about the top communitis 
+
+tags:
+  - community
+
+produces:
+        - application/json
+responses:
+  200:
+    description: top groups
+    content:
+      application/json:
+        schema:
+          type: array
+          items: 
+            type: object
+            properties:
+              chat_type:
+                type: string 
+              group_photo:
+                description: url of the photo group
+                type: string 
+              language:
+                description: language of the group
+                type: string 
+              tg_group_id:
+                type: string
+              tg_group_link:
+                type: string
+              tg_group_name:
+                type: string
+              total_message:
+                type: integer 
+              total_users:
+                type: integer 
+        example:
+          - chat_type: "supergroup"
+            group_photo: "https://naos.hersel.it/group_photo/-1001138996736.jpg"
+            language: "IT"
+            tg_group_id: "-1001138996736"
+            tg_group_link: "https://t.me/javascript_ita"
+            tg_group_name: "[SN] JavaScript"
+            total_message: 5131,
+            total_users: 792
+
+

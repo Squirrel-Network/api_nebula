@@ -15,5 +15,6 @@ PyMySQL==0.10.1
 PyPika==0.44.0
 pyrsistent==0.17.3
 PyYAML==5.4.1
+requests==2.27.1
 six==1.15.0
 Werkzeug==1.0.1

@@ -1,0 +1,35 @@
+summary: Send message to a specific chat
+description: Send message to a specific chat
+security:
+  - bearerAuth: []
+
+tags:
+  - tools 
+parameters:
+  - in: query 
+    name: chatid
+    schema:
+      type: string
+    description: id of the chat to send the message to
+  - in: query 
+    name: message 
+    schema:
+      type: string
+    description: text message
+
+
+produces:
+        - application/json
+responses:
+  200:
+    $ref: '#/components/responses/OkResponse'
+  401:
+    $ref: '#/components/responses/NotAuthorizedResponse'
+  400:
+    description: 'Invalid data for the message'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ErrorSchema'
+        example:
+          error:  Missing text or chatid params
