@@ -59,6 +59,14 @@ def users_search():
     else:
         return render_template("users.html")
 
+###################
+### Fake Route  ###
+###################
+@app.route('/wp-admin', methods=['POST','GET'])
+@app.route('/wp-login', methods=['POST','GET'])
+@app.route('/admin', methods=['POST','GET'])
+def fake_route():
+    return render_template("fakeroute.html")
 
 ####################
 ### API EndPoint ###
