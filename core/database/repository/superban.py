@@ -24,6 +24,11 @@ class SuperbanRepository(Connection):
 
         return self._selectAll(q)
 
+    def getFirstLetterByName(self):
+        q = "SELECT user_first_name FROM superban_table WHERE user_date BETWEEN DATE_SUB(NOW(), INTERVAL 15 DAY) AND NOW() ORDER BY user_date DESC LIMIT 20"
+
+        return self._selectAll(q)
+
     def getCountSuperBanned(self):
         q = 'SELECT COUNT(*) AS counter FROM superban_table'
 

@@ -15,6 +15,7 @@ from core.api.users import api_users
 from core.api.community import api_community
 from core.api.groups import api_groups
 from core.api.bot_service import api_bot_service
+from datetime import datetime
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -37,6 +38,13 @@ Swagger(app,
         }],
     })
 
+def get_first_letter():
+    rows = SuperbanRepository().getLastSuperBanned()
+    for row in rows:
+        nickname = row['user_first_name']
+        a = nickname[0:1].capitalize()
+        return a
+
 #############
 ### Home ###
 ############
@@ -44,7 +52,9 @@ Swagger(app,
 def index():
     data = SuperbanRepository().getLastSuperBanned()
     countsb = SuperbanRepository().getCountSuperBanned()
-    return render_template("home.html", data = data, countsb = countsb['counter'])
+    time_in_utc = datetime.utcnow()
+    now_time = time_in_utc.strftime("%b %d %Y %H:%M %Z")
+    return render_template("home.html", data = data, countsb = countsb['counter'], now_time = now_time, upper = get_first_letter())
 
 ###################
 ### User Search ###
