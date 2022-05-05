@@ -2,13 +2,17 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
+
+import os
+import time
 from config import Config
 from core.database.repository.superban import SuperbanRepository
 from core.database.repository.users import UserRepository
-from flask import Flask, request,render_template
+from flask import Flask, request,render_template, send_from_directory
 from flasgger import Swagger
 from core.utilities.limiter import limiter
 from core.utilities.auth_manager import auth
+from core.utilities.functions import get_formatted_time
 from core.api.test import api_test
 from core.api.blacklist import api_blacklist
 from core.api.users import api_users
@@ -38,23 +42,20 @@ Swagger(app,
         }],
     })
 
-def get_first_letter():
-    rows = SuperbanRepository().getLastSuperBanned()
-    for row in rows:
-        nickname = row['user_first_name']
-        a = nickname[0:1].capitalize()
-        return a
-
 #############
 ### Home ###
 ############
 @app.route('/')
 def index():
     data = SuperbanRepository().getLastSuperBanned()
+    for row in data:
+        row['upper'] = row['user_first_name'][:1].upper()
+        row['user_time'] = get_formatted_time(str(row['user_date']))
     countsb = SuperbanRepository().getCountSuperBanned()
+    countsbNm = '{:20,}'.format(countsb['counter'])
     time_in_utc = datetime.utcnow()
     now_time = time_in_utc.strftime("%b %d %Y %H:%M %Z")
-    return render_template("home.html", data = data, countsb = countsb['counter'], now_time = now_time, upper = get_first_letter())
+    return render_template("home.html", data = data, countsb = countsbNm, now_time = now_time)
 
 ###################
 ### User Search ###
@@ -77,6 +78,10 @@ def users_search():
 @app.route('/admin', methods=['POST','GET'])
 def fake_route():
     return render_template("fakeroute.html")
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 ####################
 ### API EndPoint ###

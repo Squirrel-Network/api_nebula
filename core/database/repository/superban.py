@@ -20,12 +20,12 @@ class SuperbanRepository(Connection):
         return self._selectAll(q, args)
 
     def getLastSuperBanned(self):
-        q = "SELECT * FROM superban_table WHERE user_date BETWEEN DATE_SUB(NOW(), INTERVAL 15 DAY) AND NOW() ORDER BY user_date DESC LIMIT 20"
+        q = "SELECT * FROM superban_table WHERE user_date BETWEEN DATE_SUB(NOW(), INTERVAL 15 DAY) AND NOW() ORDER BY user_date DESC LIMIT 8"
 
         return self._selectAll(q)
 
     def getFirstLetterByName(self):
-        q = "SELECT user_first_name FROM superban_table WHERE user_date BETWEEN DATE_SUB(NOW(), INTERVAL 15 DAY) AND NOW() ORDER BY user_date DESC LIMIT 20"
+        q = "SELECT user_first_name FROM superban_table WHERE user_date BETWEEN DATE_SUB(NOW(), INTERVAL 15 DAY) AND NOW() ORDER BY user_date DESC LIMIT 8"
 
         return self._selectAll(q)
 
@@ -69,10 +69,7 @@ class SuperbanRepository(Connection):
 
         if order_by in valid_order_fields:
             order_dir = parameters.get('@order_dir', '').lower()
-            print(order_dir)
             order_dir = Order.desc if order_dir == 'desc' else Order.asc
-            print(order_dir)
-            print(order_by)
             query = query.orderby(order_by, order=order_dir)
 
         return query

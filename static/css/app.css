@@ -1,0 +1,284 @@
+body {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    --ripple-duration: .45s;
+    --ripple-end-duration: .3s;
+}
+html {
+    background: #331a13;
+}
+html, body {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    user-select:none;
+    -o-user-select:none;
+}
+* {
+    -webkit-tap-highlight-color: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-weight: 500;
+}
+::-webkit-scrollbar {
+    width:0;
+    display: none;
+}
+.top_menu {
+    width: 85%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+}
+.logo_top {
+    width: 60px;
+}
+.right_text_container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.right_text_container > div:nth-child(1) {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+.right_text_container > div:nth-child(1) > div:nth-child(1) {
+    font-family: "Google Sans", "Roboto", Arial, sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    color: #c99a8e
+}
+.right_text_container > div:nth-child(1) > div:nth-child(2) {
+    font-family: "Google Sans", "Roboto", Arial, sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    margin-top: 5px;
+    color: white
+}
+.top_bar {
+    width: 85%;
+    max-width: 900px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #3d1d15;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.top_bar:nth-child(2) > div:nth-child(1) {
+    margin-top: 30px;
+    height: 180px;
+    width: 180px;
+}
+.top_bar:nth-child(2) > div:nth-child(2) {
+    font-family: "Google Sans", "Roboto", Arial, sans-serif;
+    font-weight: 200;
+    font-size: 15px;
+    color: white;
+    margin: 10px 30px 15px;
+    max-width: 380px;
+    line-height: 18px;
+    text-align: center;
+}
+.top_bar:nth-child(2) > div:nth-child(2) > a {
+    text-decoration: none;
+    color: #f17352;
+    padding: 1px 2px;
+    margin: 2px 0;
+    text-align: center;
+    line-height: 18px;
+    border-radius: 4px;
+}
+.top_bar:nth-child(2) > div:nth-child(2) > a:hover {
+    background: rgba(241, 115, 82, 0.13);
+}
+.top_bar:nth-child(2) > div:nth-child(3) {
+    margin-bottom: 20px;
+}
+
+.header_button {
+    width: calc(100% - 40px);
+    max-width: 380px;
+    font-size: 15px !important;
+    padding: 12px 22px !important;
+    margin-bottom: 20px;
+}
+
+.button-item.ripple-handler {
+    position: relative;
+}
+
+.button-item {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 7px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+    color: white;
+    outline: none;
+    border: none;
+}
+
+.ripple-mask {
+    position: absolute;
+    left: 0; right: 0;
+    top: 0; bottom: 0;
+    transform: translateZ(0);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.button-item .ripple-mask {
+    border-radius: inherit;
+}
+
+.button-item .ripple {
+    position: absolute;
+    width: 200%;
+    left: 50%; top: 50%;
+    margin: -100% 0 0 -100%;
+    padding-top: 200%;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.07);
+    transition:
+            transform var(--ripple-duration) ease-out,
+            opacity var(--ripple-duration) ease-out,
+            background-color var(--ripple-duration) ease-out;
+    opacity: 0;
+}
+
+.button-item-label {
+    font-variation-settings: 'FILL' 0, 'wght' 800, 'GRAD' -25, 'opsz' 48 !important;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+.button-item-label > img {
+    margin-right: 5px;
+    width: 20px;
+}
+
+body>div:nth-child(3) {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.header_text {
+    font-family: google sans,roboto,Arial,sans-serif;
+    font-weight: 540;
+    color: #f17352;
+    width: calc(100% - 20px);
+    margin-top: 16px;
+    margin-left: 20px;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.banned_user_button {
+    width: 100%;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+.banned_user_button > div:nth-child(1) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.banned_user_button > div:nth-child(1) > div:nth-child(1) {
+    font-size: 25px;
+    aspect-ratio: 1/1;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f17352;
+    border-radius: 40px;
+}
+.banned_user_button > div:nth-child(1) > div:nth-child(2) {
+    margin-left: 15px;
+}
+.banned_user_button > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) {
+    font-size: 17px;
+    color: white;
+    margin-bottom: 5px;
+}
+.banned_user_button > div:nth-child(1) > div:nth-child(2) > span:nth-child(2) {
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: 400;
+    color: #c99a8e
+}
+.banned_user_button > div:nth-child(1) > div:nth-child(2) > span:nth-child(2) > span:nth-child(1) {
+    margin-right: 5px;
+    font-weight: 500;
+    color: #f17352;
+}
+.banned_user_button > div:nth-child(1) > div:nth-child(3) {
+    position: absolute;
+    width: calc(100% - 40px);
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.banned_user_button > div:nth-child(1) > div:nth-child(3) > span:nth-child(1) {
+    font-size: 14px;
+    font-weight: 400;
+    color: #c99a8e;
+    margin-top: 10px;
+}
+
+.divider {
+    position: absolute;
+    width: calc(100% - 40px);
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+}
+.divider > div{
+    width: 100%;
+    margin-left: 65px;
+    height: 1px;
+    background: #0000002f;
+}
+
+.sp_header > .button-item:last-child .divider {
+    display: none;
+}
+
+.data {
+    display: none;
+}
+
+.dialog {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #0000002f;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}

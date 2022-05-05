@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
+import time
 from flask import current_app, request, Response, jsonify
 from werkzeug.exceptions import abort
 from datetime import datetime
@@ -92,3 +93,16 @@ def validation_error_response_handler(err, data, schema):
     current_app.logger.warn('sdads')
     abort(Response(jsonify({'error': str(err), 'data': data, 'schema': schema}),status = 400))
     #abort({ 'error': str(err)}, 400)
+
+def get_formatted_time(t: str) -> str:
+    p_time = datetime.fromisoformat(t)
+    c_time = datetime.fromtimestamp(time.time())
+    if p_time.year == c_time.year:
+        if p_time.month == c_time.month:
+            if p_time.day == c_time.day:
+                return f'{p_time.strftime("%H")}:{p_time.strftime("%M")}'
+            elif p_time.isocalendar()[1] == c_time.isocalendar()[1]:
+                return f'{p_time.strftime("%a")}'
+        return f'{p_time.day} {p_time.strftime("%b")}'
+    else:
+        return f'{p_time.strftime("%m.%d.%Y")}'
