@@ -10,16 +10,20 @@ api_blacklist = Blueprint('api_blacklist', __name__)
 
 
 @api_blacklist.route('/blacklist/<int:tg_id>', methods=['GET'])
-@limiter.limit("1000 per day")
+@limiter.limit("1500 per day")
 @limiter.limit("3/seconds")
 @swag_from('../../openapi/blacklist_get.yaml')
 def get_blacklist(tg_id):
     row = SuperbanRepository().getById([tg_id])
     if row:
-        return {'tg_id': row['user_id'],
+        return {'user_tg_id': row['user_id'],
+        'user_tg_first_name': row['user_first_name'],
         'reason': row['motivation_text'],
-        'date': row['user_date'].isoformat(), # TODO: manage dates in serializer
-        'operator': row['id_operator']}
+        'date': row['user_date'].isoformat(),
+        'operator_id': row['id_operator'],
+        'operator_first_name': row['first_name_operator'],
+        'operator_username': row['username_operator']
+        }
     else:
         return ({ 'error': 'The user was not superbanned or you entered an incorrect id' }, 404)
 

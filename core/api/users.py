@@ -38,7 +38,6 @@ def users():
 @api_users.route('/users/<int:tg_id>', methods=['GET'])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
-@auth.auth_required()
 @swag_from('../../openapi/users_get.yaml')
 def user_by_id(tg_id):
     row = UserRepository().getById([tg_id])
