@@ -13,6 +13,7 @@
     <div class="jumbotron">
         <h1 class="display-4">Welcome to Nebula's public user search</h1>
         <p class="lead">Here you can search for users in our database.</p>
+        <h3>The database contains: {{ counter }} users</h3>
         <hr class="my-4">
       </div>
 
@@ -40,6 +41,7 @@
               <td>{{ data.tg_username }}</td>
               <td>{{ data.created_at }}</td>
               <td>{{ data.updated_at }}</td>
+              <td><a class="btn btn-primary" href="https://api.nebula.squirrel-network.online/v1/users/{{ data.tg_id }}">API</a></td>
             </tr>
           </tbody>
         </table>

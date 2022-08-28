@@ -62,13 +62,14 @@ def index():
 ###################
 @app.route('/users', methods=['POST','GET'])
 def users_search():
+    counter = UserRepository().getCountUsers()
     if request.method == 'POST':
         username = request.form.get('username')
         if username is not None:
             data = UserRepository().getByUsername(username)
-        return render_template("users.html", data = data)
-    else:
-        return render_template("users.html")
+        return render_template("users.html", data = data, counter=counter['counter'])
+    if request.method == 'GET':
+        return render_template("users.html",counter=counter['counter'])
 
 ###################
 ### Fake Route  ###

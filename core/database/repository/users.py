@@ -94,3 +94,8 @@ class UserRepository(Connection):
         if username:
             query = query.where(users.tg_username.like('%{0}%'.format(username)))
         return query
+
+    def getCountUsers(self):
+        q = 'SELECT COUNT(*) AS counter FROM users'
+
+        return self._select(q)
