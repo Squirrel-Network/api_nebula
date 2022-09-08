@@ -1,4 +1,4 @@
-window.onload = (event) => {
+window.onload = (_) => {
     initRipple();
     bodymovin.loadAnimation({
         container: document.getElementById("header_loader"),
@@ -11,6 +11,13 @@ window.onload = (event) => {
         }
     });
 }
+
+const appHeight = () => {
+    const doc = document.documentElement
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`)
+}
+window.addEventListener('resize', appHeight)
+appHeight()
 
 function initRipple() {
     if (!document.querySelectorAll) return;
@@ -78,4 +85,30 @@ function refreshPage() {
     setTimeout(() => {
         location.reload();
     }, 200);
+}
+
+function openItem(element) {
+    setTimeout(() => {
+        window.scrollTo(0, 1);
+        const data = JSON.parse(element.getElementsByClassName('data')[0].innerHTML);
+        const dialog = document.getElementsByClassName('dialog')[0];
+        dialog.style.display = '';
+        setTimeout(() => {
+            dialog.style.opacity = '1';
+            dialog.style.backdropFilter = 'blur(5px)';
+        }, 25);
+        let textMessage = "<p><b>Banned User</b><br>ID: " + data.ID + "</p>";
+        textMessage += "<p><b>Operator</b><br>ID: " + data.Operator.ID + "<br>"
+        textMessage += "Name: <a target='_blank' href='https://t.me/" + data.Operator.Username.substring(1) + "'>" + data.Operator.Name + "</a></p>";
+        document.getElementById('dialog_data').innerHTML = textMessage;
+    }, 100);
+}
+
+function closeDialog() {
+    const dialog = document.getElementsByClassName('dialog')[0];
+    dialog.style.opacity = '0';
+    dialog.style.backdropFilter = 'blur(0px)';
+    setTimeout(() => {
+        dialog.style.display = 'none';
+    }, 250);
 }
