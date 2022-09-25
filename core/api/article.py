@@ -16,6 +16,7 @@ def article():
     articles = GroupRepository().get_article()
     return jsonify(list(map(lambda row: {
         'article_id': row['article_id'],
+        'title': row['title'],
         'language': row['language'],
         'content': row['content'],
         'created_at': format_iso_date(row['created_at']),
