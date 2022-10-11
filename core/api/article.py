@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 from core.utilities.limiter import limiter
 from core.utilities.functions import format_iso_date
 from core.database.repository.groups import GroupRepository
