@@ -18,6 +18,7 @@ def staff():
     return jsonify(list(map(lambda row: {
         'id': row['id'],
         'name': row['name'],
+        'description': row['description'],
         'contact': row['contact'],
         'git': row['git'],
         'photo': row['photo']
