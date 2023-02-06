@@ -20,6 +20,7 @@ from core.api.community import api_community
 from core.api.groups import api_groups
 from core.api.bot_service import api_bot_service
 from core.api.article import api_article
+from core.api.sn_staff import api_staff_sn
 from datetime import datetime
 from flask_cors import CORS
 
@@ -95,6 +96,7 @@ app.register_blueprint(api_community, url_prefix='/v1')
 app.register_blueprint(api_groups, url_prefix='/v1')
 app.register_blueprint(api_bot_service, url_prefix='/v1')
 app.register_blueprint(api_article, url_prefix='/v1')
+app.register_blueprint(api_staff_sn, url_prefix='/v1')
 
 # setup defaults
 defaults_values = {

@@ -99,3 +99,8 @@ class UserRepository(Connection):
         q = 'SELECT COUNT(*) AS counter FROM users'
 
         return self._select(q)
+
+    def getSnStaff(self):
+         q = "SELECT * FROM nebula_dashboard_staff LIMIT 50"
+
+         return self._selectAll(q)
