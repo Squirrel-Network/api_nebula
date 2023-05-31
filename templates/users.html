@@ -21,30 +21,27 @@
         <div class="input-group-prepend">
           <span class="input-group-text" id="basic-addon1">Username</span>
         </div>
-        <input type="text" class="form-control" placeholder="@username" aria-label="Username" name="username" aria-describedby="basic-addon1">
+        <input id="username-anchor" type="text" class="form-control" placeholder="@username" aria-label="Username" name="username" aria-describedby="basic-addon1">
         <button class="btn-search" type="submit">Search</button>
       </div>
 
       {% if data %}
-      <table class="table table-success">
-          <thead>
-            <tr>
-              <th scope="col">Telegram Id</th>
-              <th scope="col">Username</th>
-              <th scope="col">Created</th>
-              <th scope="col">Updated</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">{{ data.tg_id }}</th>
-              <td>{{ data.tg_username }}</td>
-              <td>{{ data.created_at }}</td>
-              <td>{{ data.updated_at }}</td>
-              <td><a class="btn btn-primary" href="https://api.nebula.squirrel-network.online/v1/users/{{ data.tg_id }}">API</a></td>
-            </tr>
-          </tbody>
-        </table>
+          <!--NUOVO-->
+          <div class="card text-center">
+        <div class="card-header">
+            Created: {{ data.created_at }}
+        </div>
+        <div class="card-body">
+        <h5 class="card-title">{{ data.tg_username }}</h5>
+      <p class="card-text">Telegram ID: <code>{{ data.tg_id }}</code></p>
+      <a href="https://api.nebula.squirrel-network.online/v1/users/{{ data.tg_id }}" class="btn btn-primary">API</a>
+            </div>
+            <div class="card-footer text-body-secondary">
+                Last update: {{ data.updated_at }}
+            </div>
+            </div>
+          <br>
+          <!--FINE NUOVO-->
   {% else %}
   <div class="alert alert-danger" role="alert">User not present in the database!</div>
   {% endif %}
