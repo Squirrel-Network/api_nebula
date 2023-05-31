@@ -21,7 +21,8 @@ def article():
         'language': row['language'],
         'content': row['content'],
         'created_at': format_iso_date(row['created_at']),
-        'updated_at': format_iso_date(row['updated_at'])
+        'updated_at': format_iso_date(row['updated_at']),
+        'author': row['author']
     }, articles)))
 
 
