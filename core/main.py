@@ -66,7 +66,7 @@ def index():
 def users_search():
     counter = UserRepository().getCountUsers()
     if request.method == 'POST':
-        username = request.form.get('username')
+        username = request.form.get('username').strip().lower()
         if username is not None:
             data = UserRepository().getByUsername(username)
         return render_template("users.html", data = data, counter=counter['counter'])

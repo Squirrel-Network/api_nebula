@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nebula API 3.1.0</title>
+    <meta name='viewport' content='width=device-width, user-scalable=0'>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link href="/static/css/app.css?v=17" rel="preload" as="style">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.4/lottie.min.js"></script>
+    <script src="/static/js/app.js?v=17"></script>
+</head>
+<body>
+<div style="height: 100%;overflow: scroll;width: 100%;">
+    <div class="top_menu">
+        <img class="logo_top" src="/static/img/logo.svg" alt="logo"/>
+        <div class="right_text_container">
+            <div>
+                <div>
+                    LAST UPDATE
+                </div>
+                <div id="loading_date">
+                    {{now_time}} UTC
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="top_bar">
+        <div id="header_loader"></div>
+        <div>
+            Here you can see in real time all {{countsb}} blacklisted users from <a target="_blank" href="https://api.nebula.squirrel-network.online/apidocs/">Our System</a>.
+        </div>
+        <button class="button-item ripple-handler header_button" style="background-color: var(--accent-color)" onclick="refreshPage()">
+            <span class="button-item-label"><img src="/static/img/restart.svg" alt="icon_restart">Refresh Page</span>
+            <span class="ripple-mask"><span class="ripple"></span></span>
+        </button>
+    </div>
+    <div class="top_bar sp_header">
+        <div class="header_text">
+            Latest super banned
+        </div>
+        {% for row in data %}
+        <div class="button-item ripple-handler banned_user_button" onclick="openItem(this)">
+            <div>
+                <div>{{row['upper']}}</div>
+                <div>
+                    <div>{{row['user_first_name']}}</div>
+                    <span><span>Reason:</span>{{row['motivation_text']}}</span>
+                </div>
+                <div>
+                    <span>{{row['user_time']}}</span>
+                </div>
+                <div class="divider"><div></div></div>
+            </div>
+            <div class="data">
+                {
+                "ID": {{row['user_id']}},
+                "Operator": {
+                    "ID": {{row['id_operator']}},
+                    "Name": "{{row['first_name_operator']}}",
+                    "Username": "{{row['username_operator']}}"
+                }
+                }
+            </div>
+            <span class="ripple-mask"><span class="ripple"></span></span>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="footer">
+        <!--<div>TEST</div>-->
+    </div>
+</div>
+<div class="dialog" style="display: none">
+    <div onclick="closeDialog()"></div>
+    <div class="dialog_component">
+        <div>More Info</div>
+        <div id="dialog_data"></div>
+        <div>
+            <button class="button-item ripple-handler close_dialog_button" style="background-color: transparent" onclick="closeDialog()">
+                <span class="button-item-label">CLOSE</span>
+                <span class="ripple-mask"><span class="ripple"></span></span>
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
