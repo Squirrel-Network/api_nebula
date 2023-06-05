@@ -12,17 +12,19 @@ from flask import Flask, render_template, send_from_directory
 from flask_cors import CORS
 
 from config import Config, Session
-from core.api.article import api_article
-from core.api.blacklist import api_blacklist
-from core.api.bot_service import api_bot_service
-from core.api.community import api_community
-from core.api.groups import api_groups
-from core.api.sn_staff import api_staff_sn
-from core.api.test import api_test
-from core.api.users import api_users
+from core.api import (
+    article,
+    auth,
+    blacklist,
+    bot_service,
+    community,
+    groups,
+    sn_staff,
+    test,
+    users,
+)
 from core.database import create_pool
 from core.database.repository import SuperbanRepository, UserRepository
-from core.utilities.auth_manager import auth
 from core.utilities.functions import get_formatted_time
 from core.utilities.limiter import limiter
 
@@ -45,7 +47,6 @@ app.config.from_object(conf)
 CORS(app)
 
 limiter.init_app(app)
-auth.init_app(app)
 
 
 Swagger(
@@ -107,14 +108,15 @@ def favicon():
 
 
 # API EndPoint
-app.register_blueprint(api_test, url_prefix="/v1")
-app.register_blueprint(api_blacklist, url_prefix="/v1")
-app.register_blueprint(api_users, url_prefix="/v1")
-app.register_blueprint(api_community, url_prefix="/v1")
-app.register_blueprint(api_groups, url_prefix="/v1")
-app.register_blueprint(api_bot_service, url_prefix="/v1")
-app.register_blueprint(api_article, url_prefix="/v1")
-app.register_blueprint(api_staff_sn, url_prefix="/v1")
+app.register_blueprint(auth.auth, url_prefix="/authenticate")
+app.register_blueprint(test.api_test, url_prefix="/v1/hi")
+app.register_blueprint(blacklist.api_blacklist, url_prefix="/v1")
+app.register_blueprint(users.api_users, url_prefix="/v1")
+app.register_blueprint(community.api_community, url_prefix="/v1")
+app.register_blueprint(groups.api_groups, url_prefix="/v1")
+app.register_blueprint(bot_service.api_bot_service, url_prefix="/v1")
+app.register_blueprint(article.api_article, url_prefix="/v1/news")
+app.register_blueprint(sn_staff.api_staff_sn, url_prefix="/v1/snstaff")
 
 
 if __name__ == "__main__":

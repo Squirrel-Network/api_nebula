@@ -2,53 +2,16 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-from datetime import datetime, timedelta
-from functools import wraps
-from flasgger import swag_from
 
-from flask import Flask, request
+from functools import wraps
+
 import jwt
+from flask import Flask, request
 
 
 class _Auth:
-    # def __init__(self):
-    #    self.app = None
-
     def init_app(self, app: Flask):
         self.app = app
-
-        config_token = app.config["TOKEN"] or ""
-        app.config["TOKENS"] = [t.strip() for t in config_token.split(",") if t]
-
-        @swag_from("../../openapi/auth.yaml")
-        @app.route("/authenticate", methods=["POST"])
-        def authenticate():
-            token = None
-            if request.json:
-                token = request.json.get("token", None)
-            elif request.form:
-                token = request.form.get("token", None)
-
-            if not token:
-                return ({"error": "missing token"}, 400)
-
-            if not token in app.config["TOKENS"]:
-                return ({"error": "not authorized"}, 403)
-
-            expires = datetime.utcnow() + timedelta(
-                minutes=app.config["TOKEN_DURATION_MINUTES"]
-            )
-            jwt_token = jwt.encode(
-                {
-                    "auth": "true",
-                    "exp": expires,
-                    "iss": "nebula_api",
-                },
-                app.config["SECRET"],
-                algorithm="HS256",
-            )
-
-            return {"token": jwt_token}
 
     def _discover_token(self):
         """

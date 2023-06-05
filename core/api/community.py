@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-from flask import Blueprint, request, jsonify
+
 from flasgger import swag_from
-from core.utilities.limiter import limiter
+from flask import Blueprint, jsonify
+
 from core.database.repository.community import CommunityRepository
+from core.utilities.limiter import limiter
 
 api_community = Blueprint("api_community", __name__)
 
@@ -22,21 +24,7 @@ def community():
 @limiter.limit("10/seconds")
 @swag_from("../../openapi/top_community_list.yaml")
 def top_ten_community():
-    rows = CommunityRepository().top_ten_communities()
-    return jsonify(
-        list(
-            map(
-                lambda row: {
-                    "tg_group_id": row["tg_group_id"],
-                    "tg_group_name": row["group_name"],
-                    "tg_group_link": row["tg_group_link"],
-                    "group_photo": row["group_photo"],
-                    "language": row["language"],
-                    "chat_type": row["type"],
-                    "total_users": row["total_users"],
-                    "total_message": row["counter"],
-                },
-                rows,
-            )
-        )
-    )
+    with CommunityRepository() as db:
+        rows = db.top_ten_communities()
+
+    return jsonify(rows)

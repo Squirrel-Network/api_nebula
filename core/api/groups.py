@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-from flask import Blueprint, jsonify
+
 from flasgger import swag_from
-from core.utilities.limiter import limiter
+from flask import Blueprint, jsonify
+
 from core.database.repository.groups import GroupRepository
+from core.utilities.limiter import limiter
 
 api_groups = Blueprint("api_groups", __name__)
 
@@ -22,16 +24,7 @@ def groups():
 @limiter.limit("10/seconds")
 @swag_from("../../openapi/top_groups_list.yaml")
 def groups_top_ten():
-    rows = GroupRepository().top_ten_groups()
-    return jsonify(
-        list(
-            map(
-                lambda row: {
-                    "tg_group_id": row["tg_group_id"],
-                    "tg_group_name": row["group_name"],
-                    "total_message": row["counter"],
-                },
-                rows,
-            )
-        )
-    )
+    with GroupRepository() as db:
+        rows = db.top_ten_groups()
+
+    return jsonify(rows)
