@@ -106,13 +106,14 @@ def validation_error_response_handler(err, data, schema):
 
 def get_formatted_time(t: str) -> str:
     p_time = datetime.fromisoformat(t)
-    c_time = datetime.fromtimestamp(time.time())
+    c_time = datetime.now()
+
     if p_time.year == c_time.year:
-        if p_time.month == c_time.month:
-            if p_time.day == c_time.day:
-                return f'{p_time.strftime("%H")}:{p_time.strftime("%M")}'
-            elif p_time.isocalendar()[1] == c_time.isocalendar()[1]:
-                return f'{p_time.strftime("%a")}'
-        return f'{p_time.day} {p_time.strftime("%b")}'
+        if p_time.date() == c_time.date():
+            return p_time.strftime("%H:%M")
+        elif p_time.isocalendar()[1] == c_time.isocalendar()[1]:
+            return p_time.strftime("%a")
+        else:
+            return p_time.strftime("%d %b")
     else:
-        return f'{p_time.strftime("%m.%d.%Y")}'
+        return p_time.strftime("%m.%d.%Y")

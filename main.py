@@ -8,7 +8,7 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 from flasgger import Swagger
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, send_from_directory
 from flask_cors import CORS
 
 from config import Config, Session
@@ -20,8 +20,8 @@ from core.api.groups import api_groups
 from core.api.sn_staff import api_staff_sn
 from core.api.test import api_test
 from core.api.users import api_users
-from core.database.repository.superban import SuperbanRepository
-from core.database.repository.users import UserRepository
+from core.database import create_pool
+from core.database.repository import SuperbanRepository, UserRepository
 from core.utilities.auth_manager import auth
 from core.utilities.functions import get_formatted_time
 from core.utilities.limiter import limiter
@@ -32,6 +32,10 @@ load_dotenv()
 
 # Config
 conf = Session.config = Config()
+
+
+# Load pool
+Session.db_pool = create_pool()
 
 
 # load Flask
@@ -59,28 +63,30 @@ Swagger(
 # Home
 @app.route("/")
 def index():
-    data = SuperbanRepository().getLastSuperBanned()
+    with SuperbanRepository() as db:
+        data = db.get_last_super_banned()
+        countsb = db.get_count_super_banned()
+
     for row in data:
         row["upper"] = row["user_first_name"][:1].upper()
         row["user_time"] = get_formatted_time(str(row["user_date"]))
-    countsb = SuperbanRepository().getCountSuperBanned()
+
     countsbNm = "{:20,}".format(countsb["counter"])
     time_in_utc = datetime.utcnow()
     now_time = time_in_utc.strftime("%b %d %Y %H:%M %Z")
+
     return render_template("home.html", data=data, countsb=countsbNm, now_time=now_time)
 
 
 # User Search
-@app.route("/users", methods=["POST", "GET"])
-def users_search():
-    counter = UserRepository().getCountUsers()
-    if request.method == "POST":
-        username = request.form.get("username").strip().lower()
-        if username is not None:
-            data = UserRepository().getByUsername(username)
-        return render_template("users.html", data=data, counter=counter["counter"])
-    if request.method == "GET":
-        return render_template("users.html", counter=counter["counter"])
+@app.route("/users", methods=["GET"])
+@app.route("/users/<username>", methods=["GET"])
+def users_search(username: str = None):
+    with UserRepository() as db:
+        counter = db.get_count_users()
+        data = db.get_by_username(username)
+
+    return render_template("users.html", data=data, counter=counter["counter"])
 
 
 # Fake Route

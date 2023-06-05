@@ -34,6 +34,7 @@ pydantic==1.10.8
 Pygments==2.15.1
 PyJWT==2.7.0
 PyMySQL==1.0.3
+pymysql-pool==0.4.3
 PyPika==0.48.9
 pyrsistent==0.19.3
 python-dotenv==1.0.0

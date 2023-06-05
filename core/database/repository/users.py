@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
+
 from core.database.db_connect import Connection
 from pypika import Query, Table, Order, functions as fn
 
@@ -9,30 +10,15 @@ users = Table("users")
 
 
 class UserRepository(Connection):
-    def getById(self, args=None):
-        query = Query.from_(users).select("*").where(users.tg_id == "%s")
-        q = query.get_sql(quote_char=None)
+    def get_by_id(self, tg_id: int):
+        q = "SELECT * FROM users WHERE tg_id = %s"
 
-        return self._select(q, args)
+        return self._select(q, (tg_id,))
 
-    def getByUsername(self, args=None):
+    def get_by_username(self, tg_username: str):
         q = "SELECT * FROM users WHERE tg_username = %s"
 
-        return self._select(q, args)
-
-    def getAllbyId(self, args=None):
-        query = Query.from_(users).select("*").where(users.tg_id == "%s")
-        q = query.get_sql(quote_char=None)
-
-        return self._selectAll(q, args)
-
-    def getAll(self, args=None):
-        print(args)
-        q = "SELECT * FROM users LIMIT %s,%s"
-        print(q)
-        # query = Query.from_(users).select("*")
-        # q = query.get_sql(quote_char=None)
-        return self._selectAll(q, args)
+        return self._select(q, (tg_username,))
 
     def get_all(self, **parameters):
         query = Query.from_(users).select("*")
@@ -41,7 +27,7 @@ class UserRepository(Connection):
         query = self._apply_pagination(query, **parameters)
         q = query.get_sql(quote_char=None)
         print(q)
-        return self._selectAll(q)
+        return self._select_all(q)
 
     def count(self, **parameters):
         query = Query.from_(users).select(fn.Count(1).as_("count"))
@@ -50,23 +36,20 @@ class UserRepository(Connection):
         print(q)
         return self._select(q)["count"]
 
-    def add(self, args=None):
+    def add(self, tg_id: int, tg_username: str, warn_count: int):
         q = "INSERT INTO users (tg_id, tg_username, warn_count) VALUES (%s,%s,%s)"
-        return self._insert(q, args)
 
-    def update(self, args=None):
+        return self._execute(q, (tg_id, tg_username, warn_count))
+
+    def update(self, tg_username: str, tg_id: int):
         q = "UPDATE users SET tg_username = %s WHERE tg_id = %s"
-        return self._update(q, args)
 
-    def getCountUsers(self):
-        q = "SELECT COUNT(*) AS counter FROM users"
+        return self._execute(q, (tg_username, tg_id))
 
-        return self._select(q)
-
-    def deleteUser(self, args=None):
+    def delete_user(self, tg_id: int):
         q = "DELETE FROM users WHERE tg_id = %s"
-        print(args)
-        return self._delete(q, args)
+
+        return self._execute(q, (tg_id,))
 
     def _apply_pagination(self, query: Query, **parameters):
         if "@start" in parameters:
@@ -95,12 +78,12 @@ class UserRepository(Connection):
             query = query.where(users.tg_username.like("%{0}%".format(username)))
         return query
 
-    def getCountUsers(self):
+    def get_count_users(self):
         q = "SELECT COUNT(*) AS counter FROM users"
 
         return self._select(q)
 
-    def getSnStaff(self):
+    def get_sn_staff(self):
         q = "SELECT * FROM nebula_dashboard_staff LIMIT 50"
 
-        return self._selectAll(q)
+        return self._select_all(q)

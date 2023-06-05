@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
+
 from core.database.db_connect import Connection
 from pypika import Query, Table, Order, functions as fn
 
@@ -9,35 +10,35 @@ superban = Table("superban_table")
 
 
 class SuperbanRepository(Connection):
-    def getById(self, args=None):
-        query = Query.from_(superban).select("*").where(superban.user_id == "%s")
-        q = query.get_sql(quote_char=None)
+    def get_by_id(self, user_id: int):
+        q = "SELECT * FROM superban_table WHERE user_id = %s"
 
-        return self._select(q, args)
+        return self._select(q, (user_id,))
 
-    def getAll(self, args=None):
+    def get_all(self, start: int, end: int):
         q = "SELECT * FROM superban_table LIMIT %s,%s"
 
-        return self._selectAll(q, args)
+        return self._select_all(q, (start, end))
 
-    def getLastSuperBanned(self):
+    def get_last_super_banned(self):
         q = "SELECT * FROM superban_table WHERE user_date BETWEEN DATE_SUB(NOW(), INTERVAL 15 DAY) AND NOW() ORDER BY user_date DESC LIMIT 8"
 
-        return self._selectAll(q)
+        return self._select_all(q)
 
-    def getFirstLetterByName(self):
+    def get_first_letter_by_name(self):
         q = "SELECT user_first_name FROM superban_table WHERE user_date BETWEEN DATE_SUB(NOW(), INTERVAL 15 DAY) AND NOW() ORDER BY user_date DESC LIMIT 8"
 
-        return self._selectAll(q)
+        return self._select_all(q)
 
-    def getCountSuperBanned(self):
+    def get_count_super_banned(self):
         q = "SELECT COUNT(*) AS counter FROM superban_table"
 
         return self._select(q)
 
-    def add(self, args=None):
+    def add(self, user_id: int, motivation_text: str, user_date: str, id_operator: int):
         q = "INSERT IGNORE INTO superban_table(user_id, motivation_text, user_date, id_operator) VALUES (%s,%s,%s,%s)"
-        return self._insert(q, args)
+
+        return self._execute(q, (user_id, motivation_text, user_date, id_operator))
 
     def get_all(self, **parameters):
         query = Query.from_(superban).select("*")
@@ -46,7 +47,7 @@ class SuperbanRepository(Connection):
         query = self._apply_pagination(query, **parameters)
         q = query.get_sql(quote_char=None)
         print(q)
-        return self._selectAll(q)
+        return self._select_all(q)
 
     def count(self, **parameters):
         query = Query.from_(superban).select(fn.Count(1).as_("count"))
