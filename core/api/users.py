@@ -49,19 +49,20 @@ def users():
 @limiter.limit("10/seconds")
 @swag_from("../../openapi/users_get.yaml")
 def user_by_id(tg_id):
-    row = UserRepository().getById([tg_id])
-    if row:
-        return {
-            "id": row["id"],
-            "tg_id": row["tg_id"],
-            "tg_username": row["tg_username"],
-            "created_at": format_iso_date(row["created_at"]),
-            "updated_at": format_iso_date(row["updated_at"]),
-        }
-    else:
-        return {
-            "error": "You have entered an id that does not exist or you have entered incorrect data"
-        }, 404
+    with UserRepository() as db:
+        row = db.get_by_id(int(tg_id))
+        if row:
+            return {
+                "id": row["id"],
+                "tg_id": row["tg_id"],
+                "tg_username": row["tg_username"],
+                "created_at": format_iso_date(row["created_at"]),
+                "updated_at": format_iso_date(row["updated_at"]),
+            }
+        else:
+            return {
+                "error": "You have entered an id that does not exist or you have entered incorrect data"
+            }, 404
 
 
 @api_users.route("/users/<int:tg_id>", methods=["DELETE"])
@@ -70,10 +71,11 @@ def user_by_id(tg_id):
 @auth.auth_required()
 @swag_from("../../openapi/users_delete.yaml")
 def delete_user(tg_id):
-    row = UserRepository().getById([tg_id])
-    if row:
-        data = [(tg_id)]
-        UserRepository().deleteUser(data)
-        return {"status": "ok"}
-    else:
-        return {"error": "No user found"}, 404
+    with UserRepository() as db:
+        row = db.get_by_id(int(tg_id))
+        if row:
+            with UserRepository() as db:
+                db.delete_user(int(tg_id))
+            return {"status": "I deleted user {} from the database".format(tg_id)}
+        else:
+            return {"error": "No user found"}, 404

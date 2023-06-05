@@ -19,22 +19,23 @@ api_blacklist = Blueprint("api_blacklist", __name__)
 @limiter.limit("3/seconds")
 @swag_from("../../openapi/blacklist_get.yaml")
 def get_blacklist(tg_id):
-    row = SuperbanRepository().getById([tg_id])
-    if row:
-        return {
-            "user_tg_id": row["user_id"],
-            "user_tg_first_name": row["user_first_name"],
-            "reason": row["motivation_text"],
-            "date": row["user_date"].isoformat(),
-            "operator_id": row["id_operator"],
-            "operator_first_name": row["first_name_operator"],
-            "operator_username": row["username_operator"],
-        }
-    else:
-        return (
-            {"error": "The user was not superbanned or you entered an incorrect id"},
-            404,
-        )
+    with SuperbanRepository() as db:
+        row = db.get_by_id(int(tg_id))
+        if row:
+            return {
+                "user_tg_id": row["user_id"],
+                "user_tg_first_name": row["user_first_name"],
+                "reason": row["motivation_text"],
+                "date": row["user_date"].isoformat(),
+                "operator_id": row["id_operator"],
+                "operator_first_name": row["first_name_operator"],
+                "operator_username": row["username_operator"],
+            }
+        else:
+            return (
+                {"error": "The user was not superbanned or you entered an incorrect id"},
+                404,
+            )
 
 
 @api_blacklist.route("/blacklist", methods=["GET"])
@@ -48,21 +49,22 @@ def list_blacklist():
     params["motivation_text"] = request.args.get("motivation_text", None, type=str)
     params["id_operator"] = request.args.get("id_operator", None, type=int)
 
-    rows = SuperbanRepository().get_all(**params)
-    count = SuperbanRepository().count(**params)
+    with SuperbanRepository() as db:
+        rows = db.get_all(**params)
+        count = db.count(**params)
 
-    data = list(
-        map(
-            lambda row: {
-                "id": row["id"],
-                "user_id": row["user_id"],
-                "motivation_text": row["motivation_text"],
-                "user_date": format_iso_date(row["user_date"]),
-                "id_operator": row["id_operator"],
-            },
-            rows,
+        data = list(
+            map(
+                lambda row: {
+                    "id": row["id"],
+                    "user_id": row["user_id"],
+                    "motivation_text": row["motivation_text"],
+                    "user_date": format_iso_date(row["user_date"]),
+                    "id_operator": row["id_operator"],
+                },
+                rows,
+            )
         )
-    )
 
     return get_paginated_response(data, count, params)
 
@@ -82,10 +84,11 @@ def add_blacklist():
 
     motivation = request_data.get("motivation", "unspecified")
     date = datetime.datetime.utcnow().isoformat()
-    row = SuperbanRepository().getById([user_id])
-    if row:
-        return {"error": "The user has already been blacklisted"}, 400
-    else:
-        data = [(user_id, motivation, date, operator_id)]
-        SuperbanRepository().add(data)
-        return {"status": "ok"}
+    with SuperbanRepository() as db:
+        row = db.get_by_id(int(user_id))
+        if row:
+            return {"error": "The user has already been blacklisted"}, 400
+        else:
+            with SuperbanRepository() as db:
+                db.add(int(user_id),motivation,date,operator_id)
+            return {"status": "ok"}
