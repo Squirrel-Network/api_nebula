@@ -23,7 +23,7 @@ requestBody:
 
 responses:
   200:
-    description: Autentication ok 
+    description: Autentication ok
     content:
       application/json:
         schema:
@@ -34,7 +34,7 @@ responses:
               description: bearer jwt token
         example:
           token: "eyj......"
-    
+
   403:
     description: invalid auth token
     content:

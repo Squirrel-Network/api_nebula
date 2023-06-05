@@ -111,8 +111,7 @@ responses:
               motivation_text: 'Userbot'
               user_date: '2021-01-22T21:05:32'
               id_operator: '123412341233'
- 
+
   401:
     $ref: '#/components/responses/NotAuthorizedResponse'
     #$ref: main.yaml#/components/responses/NotAuthorizedResponse
-

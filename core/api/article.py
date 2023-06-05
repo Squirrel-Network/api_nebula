@@ -7,22 +7,28 @@ from core.utilities.limiter import limiter
 from core.utilities.functions import format_iso_date
 from core.database.repository.groups import GroupRepository
 
-api_article = Blueprint('api_article', __name__)
+api_article = Blueprint("api_article", __name__)
 
-@api_article.route('/news', methods=['GET'])
+
+@api_article.route("/news", methods=["GET"])
 @limiter.limit("3000 per day")
 @limiter.limit("5/seconds")
 def article():
     articles = GroupRepository().get_article()
-    return jsonify(list(map(lambda row: {
-        'article_id': row['article_id'],
-        'title': row['article_title'],
-        'category': row['title'],
-        'language': row['language'],
-        'content': row['content'],
-        'created_at': format_iso_date(row['created_at']),
-        'updated_at': format_iso_date(row['updated_at']),
-        'author': row['author']
-    }, articles)))
-
-
+    return jsonify(
+        list(
+            map(
+                lambda row: {
+                    "article_id": row["article_id"],
+                    "title": row["article_title"],
+                    "category": row["title"],
+                    "language": row["language"],
+                    "content": row["content"],
+                    "created_at": format_iso_date(row["created_at"]),
+                    "updated_at": format_iso_date(row["updated_at"]),
+                    "author": row["author"],
+                },
+                articles,
+            )
+        )
+    )

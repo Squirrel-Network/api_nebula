@@ -10,7 +10,7 @@ community = Table("community")
 
 class CommunityRepository(Connection):
     def getById(self, args=None):
-        query = Query.from_(community).select("*").where(community.tg_group_id == '%s')
+        query = Query.from_(community).select("*").where(community.tg_group_id == "%s")
         q = query.get_sql(quote_char=None)
 
         return self._select(q, args)

@@ -1,5 +1,5 @@
-summary: Statistics about the top groups 
-description: Statistics about the top groups 
+summary: Statistics about the top groups
+description: Statistics about the top groups
 
 
 tags:
@@ -14,7 +14,7 @@ responses:
       application/json:
         schema:
           type: array
-          items: 
+          items:
             type: object
             properties:
               tg_group_id:
@@ -22,10 +22,8 @@ responses:
               tg_group_name:
                 type: string
               total_message:
-                type: integer 
+                type: integer
         example:
           - tg_group_id: "-1001138996736"
             tg_group_name: "[SN] JavaScript"
             total_message: 5131
-
-
