@@ -13,7 +13,7 @@ auth = Blueprint("auth", __name__)
 
 
 @swag_from("../../openapi/auth.yaml")
-@auth.route("/", methods=["POST"])
+@auth.route("/authenticate", methods=["POST"])
 def authenticate():
     token = None
 

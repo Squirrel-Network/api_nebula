@@ -111,7 +111,7 @@ def favicon():
 
 
 # API EndPoint
-app.register_blueprint(auth.auth, url_prefix="/authenticate")
+app.register_blueprint(auth.auth)
 app.register_blueprint(test.api_test, url_prefix="/v1/hi")
 app.register_blueprint(blacklist.api_blacklist, url_prefix="/v1")
 app.register_blueprint(users.api_users, url_prefix="/v1")
@@ -123,4 +123,4 @@ app.register_blueprint(sn_staff.api_staff_sn, url_prefix="/v1/snstaff")
 
 
 if __name__ == "__main__":
-    app.run(debug=conf.DEBUG, host="localhost")
+    app.run(debug=conf.DEBUG)
