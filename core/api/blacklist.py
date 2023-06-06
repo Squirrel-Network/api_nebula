@@ -1,15 +1,21 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright SquirrelNetwork
+
 import datetime
-from flask import Blueprint, request
+
 from flasgger import swag_from
-from core.utilities.auth_manager import auth
-from core.utilities.limiter import limiter
+from flask import Blueprint, request
+
 from core.database.repository.superban import SuperbanRepository
+from core.decorators import auth_required
 from core.utilities.functions import (
-    get_pagination_headers,
     format_iso_date,
     get_paginated_response,
-    validation_error_response_handler,
+    get_pagination_headers,
 )
+from core.utilities.limiter import limiter
 
 api_blacklist = Blueprint("api_blacklist", __name__)
 
@@ -33,7 +39,9 @@ def get_blacklist(tg_id):
             }
         else:
             return (
-                {"error": "The user was not superbanned or you entered an incorrect id"},
+                {
+                    "error": "The user was not superbanned or you entered an incorrect id"
+                },
                 404,
             )
 
@@ -41,7 +49,7 @@ def get_blacklist(tg_id):
 @api_blacklist.route("/blacklist", methods=["GET"])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
-@auth.auth_required()
+@auth_required
 @swag_from("../../openapi/blacklist_list.yaml")
 def list_blacklist():
     params = get_pagination_headers()
@@ -73,7 +81,7 @@ def list_blacklist():
 @api_blacklist.route("/blacklist", methods=["POST"])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
-@auth.auth_required()
+@auth_required
 @swag_from("../../openapi/blacklist_add.yaml")
 def add_blacklist():
     request_data = request.get_json()
@@ -90,5 +98,5 @@ def add_blacklist():
             return {"error": "The user has already been blacklisted"}, 400
         else:
             with SuperbanRepository() as db:
-                db.add(int(user_id),motivation,date,operator_id)
+                db.add(int(user_id), motivation, date, operator_id)
             return {"status": "ok"}

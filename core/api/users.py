@@ -2,16 +2,18 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-from flask import Blueprint, request, jsonify, abort
+
 from flasgger import swag_from
-from core.utilities.auth_manager import auth
-from core.utilities.limiter import limiter
+from flask import Blueprint, request
+
+from core.database.repository.users import UserRepository
+from core.decorators import auth_required
 from core.utilities.functions import (
-    get_pagination_headers,
     format_iso_date,
     get_paginated_response,
+    get_pagination_headers,
 )
-from core.database.repository.users import UserRepository
+from core.utilities.limiter import limiter
 
 api_users = Blueprint("api_users", __name__)
 
@@ -19,7 +21,7 @@ api_users = Blueprint("api_users", __name__)
 @api_users.route("/users", methods=["GET"])
 @limiter.limit("5000 per day")
 @limiter.limit("10/seconds")
-@auth.auth_required()
+@auth_required
 @swag_from("../../openapi/users_list.yaml")
 def users():
     params = get_pagination_headers()
@@ -68,7 +70,7 @@ def user_by_id(tg_id):
 @api_users.route("/users/<int:tg_id>", methods=["DELETE"])
 @limiter.limit("500 per day")
 @limiter.limit("2/seconds")
-@auth.auth_required()
+@auth_required
 @swag_from("../../openapi/users_delete.yaml")
 def delete_user(tg_id):
     with UserRepository() as db:
