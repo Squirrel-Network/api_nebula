@@ -8,7 +8,7 @@ from datetime import datetime
 
 from dotenv import load_dotenv
 from flasgger import Swagger
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, request
 from flask_cors import CORS
 
 from config import Config, Session
@@ -80,9 +80,12 @@ def index():
 
 
 # User Search
-@app.route("/users", methods=["GET"])
+@app.route("/users", methods=["GET", "POST"])
 @app.route("/users/<username>", methods=["GET"])
 def users_search(username: str = None):
+    if request.method == "POST":
+        username = request.form.get("username").strip().lower()
+
     with UserRepository() as db:
         counter = db.get_count_users()
         data = db.get_by_username(username)
