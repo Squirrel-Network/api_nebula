@@ -40,13 +40,4 @@ def authenticate():
 
 @auth.route("/login", methods=["POST"])
 def login():
-    init_data, hash_key = parse_init_data(request.json.get("initData", ""))
-
-    secret_key = hashlib.sha256(Session.config.BOT_TOKEN.encode("utf-8")).digest()
-    decoded_query_string = urllib.parse.unquote(init_data)
-
-    calculated_hash = hmac.new(
-        secret_key, decoded_query_string.encode("utf-8"), hashlib.sha256
-    ).hexdigest()
-
-    return {"result": calculated_hash == hash_key}
+    print(request.json)
