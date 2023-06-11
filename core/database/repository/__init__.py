@@ -1,3 +1,16 @@
-__all__ = ["community","groups","superban","users"]
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-from core.database.repository import *
+# Copyright SquirrelNetwork
+
+__all__ = (
+    "CommunityRepository",
+    "GroupRepository",
+    "SuperbanRepository",
+    "UserRepository",
+)
+
+from .community import CommunityRepository
+from .groups import GroupRepository
+from .superban import SuperbanRepository
+from .users import UserRepository

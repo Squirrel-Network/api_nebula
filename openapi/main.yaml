@@ -1,6 +1,6 @@
 info:
   title: Nebula Api specs
-  description: Specification for nebula API 
+  description: Specification for nebula API
   version: 0.2
 
 components:

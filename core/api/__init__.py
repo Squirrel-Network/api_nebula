@@ -1,3 +1,17 @@
-__all__ = ["article","blacklist","bot_service","community","groups","sn_staff","test","users"]
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-from core.api import *
+# Copyright SquirrelNetwork
+
+__all__ = (
+    "article",
+    "auth",
+    "blacklist",
+    "bot_service",
+    "community",
+    "groups",
+    "sn_staff",
+    "test",
+)
+
+from . import article, auth, blacklist, bot_service, community, groups, sn_staff, test

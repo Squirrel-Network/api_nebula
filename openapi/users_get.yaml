@@ -42,4 +42,3 @@ responses:
 
   404:
     description: the user is not blacklisted
-

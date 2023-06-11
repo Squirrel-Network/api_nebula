@@ -1,3 +1,4 @@
-__all__ = ["auth_manager","functions","limiter"]
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-from core.utilities import *
+# Copyright SquirrelNetwork

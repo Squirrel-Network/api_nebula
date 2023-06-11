@@ -4,15 +4,15 @@ security:
   - bearerAuth: []
 
 tags:
-  - tools 
+  - tools
 parameters:
-  - in: query 
+  - in: query
     name: chatid
     schema:
       type: string
     description: id of the chat to send the message to
-  - in: query 
-    name: message 
+  - in: query
+    name: message
     schema:
       type: string
     description: text message
