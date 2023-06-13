@@ -22,6 +22,7 @@ from core.api import (
     sn_staff,
     test,
     users,
+    group,
 )
 from core.database import create_pool
 from core.database.repository import SuperbanRepository, UserRepository
@@ -116,6 +117,7 @@ app.register_blueprint(test.api_test, url_prefix="/v1/hi")
 app.register_blueprint(blacklist.api_blacklist, url_prefix="/v1")
 app.register_blueprint(users.api_users, url_prefix="/v1")
 app.register_blueprint(community.api_community, url_prefix="/v1")
+app.register_blueprint(group.api_group, url_prefix="/v1/group")
 app.register_blueprint(groups.api_groups, url_prefix="/v1")
 app.register_blueprint(bot_service.api_bot_service, url_prefix="/v1")
 app.register_blueprint(article.api_article, url_prefix="/v1/news")

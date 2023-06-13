@@ -3,15 +3,10 @@
 
 # Copyright SquirrelNetwork
 
-import hashlib
-import hmac
-import urllib.parse
-
 from flasgger import swag_from
 from flask import Blueprint, request
 
 from config import Session
-from core.utilities.functions import parse_init_data
 from core.utilities.token_jwt import TokenJwt, encode_jwt
 
 auth = Blueprint("auth", __name__)
@@ -36,19 +31,3 @@ def authenticate():
     token_jwt = TokenJwt(True)
 
     return {"token": encode_jwt(token_jwt)}
-
-
-@auth.route("/login", methods=["POST"])
-def login():
-    data = urllib.parse.unquote(request.json.get("initData"))
-
-    result, hash_key = parse_init_data(data)
-
-    secret_key = hmac.new(
-        "WebAppData".encode(), Session.config.BOT_TOKEN.encode(), hashlib.sha256
-    ).digest()
-    calculated_hash = hmac.new(secret_key, result.encode(), hashlib.sha256).hexdigest()
-
-    print(calculated_hash == hash_key)
-
-    return {"result": calculated_hash == hash_key}

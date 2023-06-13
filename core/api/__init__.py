@@ -9,9 +9,20 @@ __all__ = (
     "blacklist",
     "bot_service",
     "community",
+    "group",
     "groups",
     "sn_staff",
     "test",
 )
 
-from . import article, auth, blacklist, bot_service, community, groups, sn_staff, test
+from . import (
+    article,
+    auth,
+    blacklist,
+    bot_service,
+    community,
+    group,
+    groups,
+    sn_staff,
+    test,
+)

@@ -7,6 +7,14 @@ from core.database.db_connect import Connection
 
 
 class GroupRepository(Connection):
+    EXE_FILTER = "exe_filter"
+    GIF_FILTER = "gif_filter"
+    ZIP_FILTER = "zip_filter"
+    TARGZ_FILTER = "targz_filter"
+    JPG_FILTER = "jpg_filter"
+    DOCX_FILTER = "docx_filter"
+    APK_FILTER = "apk_filter"
+
     def get_by_id(self, id_group: int):
         q = "SELECT * FROM groups WHERE id_group = %s"
 

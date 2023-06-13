@@ -3,6 +3,6 @@
 
 # Copyright SquirrelNetwork
 
-__all__ = ("auth_required",)
+__all__ = ("auth_required", "auth_telegram")
 
-from .auth import auth_required
+from .auth import auth_required, auth_telegram

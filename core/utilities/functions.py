@@ -120,11 +120,14 @@ def get_formatted_time(t: str) -> str:
 
 
 def parse_init_data(data: str) -> tuple[str]:
-    result = {k: v for k, v in (x.split("=") for x in data.split("&"))}
+    try:
+        result = {k: v for k, v in (x.split("=") for x in data.split("&"))}
 
-    hash_key = result.pop("hash")
+        hash_key = result.pop("hash")
 
-    return (
-        "\n".join([f"{k}={v}" for k, v in dict(sorted(result.items())).items()]),
-        hash_key,
-    )
+        return (
+            "\n".join([f"{k}={v}" for k, v in dict(sorted(result.items())).items()]),
+            hash_key,
+        )
+    except (ValueError, KeyError):
+        return (None, None)
