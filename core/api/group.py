@@ -25,7 +25,7 @@ api_group = Blueprint("api_group", __name__)
 
 @api_group.route("/group/<chat_id>/filters", methods=["GET"])
 @limiter.limit("5000 per day")
-@limiter.limit("5/seconds")
+@limiter.limit("10/seconds")
 @auth_telegram
 def get_filters_settings(chat_id: int, init_data: InitDataModel):
     with GroupRepository() as db:
