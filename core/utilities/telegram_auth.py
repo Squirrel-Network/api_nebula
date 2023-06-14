@@ -57,6 +57,7 @@ def validate_init_data(data: str) -> InitDataModel | None:
 
 
 def decode_telegram_jwt(token: str) -> bool:
+    print(Session.config.TELEGRAM_SECRET)
     try:
         return bool(
             jwt.decode(token, Session.config.TELEGRAM_SECRET, algorithms=["HS256"])

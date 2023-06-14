@@ -31,9 +31,6 @@ def auth_telegram(func: typing.Callable):
         validate = validate_init_data(request.headers.get("X-Init-Data", ""))
         token = request.headers.get("Authorization", "Bearer XX").split()
 
-        print(validate)
-        print(decode_telegram_jwt(token[1]))
-
         if not validate or len(token) <= 1 or not decode_telegram_jwt(token[1]):
             return ({"error": "not authorized"}, 401)
 
