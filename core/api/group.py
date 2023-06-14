@@ -34,4 +34,4 @@ def get_filters_settings(chat_id: int, init_data: InitDataModel):
     if not data:
         return ({"error": "chat_id does not exist"}, 404)
 
-    return {k: v for k, v in data.items() if k in FILTERS_KEY}
+    return {k: bool(v) for k, v in data.items() if k in FILTERS_KEY}
