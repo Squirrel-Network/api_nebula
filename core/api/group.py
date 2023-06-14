@@ -23,7 +23,7 @@ FILTERS_KEY = [
 api_group = Blueprint("api_group", __name__)
 
 
-@api_group.route("/<int:chat_id>/filters", methods=["GET"])
+@api_group.route("/group/<int:chat_id>/filters", methods=["GET"])
 @limiter.limit("5000 per day")
 @limiter.limit("5/seconds")
 @auth_telegram
