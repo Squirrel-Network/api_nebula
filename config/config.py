@@ -14,6 +14,7 @@ LIST_ENV = (
     ("TOKEN", "TOKEN"),
     ("SECRET", "SECRET"),
     ("BOT_TOKEN", "BOT_TOKEN"),
+    ("TELEGRAM_SECRET", "TELEGRAM_SECRET"),
 )
 
 
@@ -32,6 +33,7 @@ class Config(BaseSettings):
     TOKEN_DURATION_MINUTES: int = 10
     PAGE_SIZE_DEFAULT: int = 50
     PAGE_SIZE_MAX: int = 1000
+    TELEGRAM_SECRET: str
 
     # Telegram settings
     BOT_TOKEN: str

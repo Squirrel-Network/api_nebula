@@ -117,17 +117,3 @@ def get_formatted_time(t: str) -> str:
             return p_time.strftime("%d %b")
     else:
         return p_time.strftime("%m.%d.%Y")
-
-
-def parse_init_data(data: str) -> tuple[str]:
-    try:
-        result = {k: v for k, v in (x.split("=") for x in data.split("&"))}
-
-        hash_key = result.pop("hash")
-
-        return (
-            "\n".join([f"{k}={v}" for k, v in dict(sorted(result.items())).items()]),
-            hash_key,
-        )
-    except (ValueError, KeyError):
-        return (None, None)

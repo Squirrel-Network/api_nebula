@@ -6,8 +6,9 @@
 from flask import Blueprint
 
 from core.database.repository.groups import GroupRepository
-from core.utilities.limiter import limiter
 from core.decorators import auth_telegram
+from core.utilities.limiter import limiter
+from core.utilities.telegram_auth import InitDataModel
 
 FILTERS_KEY = [
     GroupRepository.EXE_FILTER,
@@ -26,7 +27,7 @@ api_group = Blueprint("api_group", __name__)
 @limiter.limit("5000 per day")
 @limiter.limit("5/seconds")
 @auth_telegram
-def get_filters_settings(chat_id: int):
+def get_filters_settings(chat_id: int, init_data: InitDataModel):
     with GroupRepository() as db:
         data = db.get_by_id(chat_id)
 
