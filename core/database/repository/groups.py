@@ -34,3 +34,10 @@ class GroupRepository(Connection):
         q = "SELECT * FROM nebula_dashboard_content LIMIT 100"
 
         return self._select_all(q)
+
+    def update_groups_settings(self, record: str, value: str, group_id: int):
+        q = "UPDATE groups SET @record = %s WHERE id_group = %s".replace(
+            "@record", record
+        )
+
+        return self._execute(q, (value, group_id))
