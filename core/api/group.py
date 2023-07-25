@@ -3,12 +3,14 @@
 
 # Copyright SquirrelNetwork
 
+import datetime
+
 from flask import Blueprint, request
 from jsonschema import Draft7Validator
+from quart_rate_limiter import rate_limit
 
 from core.database.repository.groups import GroupRepository
 from core.decorators import auth_telegram
-from core.utilities.limiter import limiter
 from core.utilities.telegram_auth import InitDataModel
 
 FILTERS_KEY = [
@@ -32,8 +34,8 @@ api_group = Blueprint("api_group", __name__)
 
 
 @api_group.route("/group/<chat_id>/filters", methods=["GET"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
+@rate_limit(5000, datetime.timedelta(days=1))
+@rate_limit(10, datetime.timedelta(seconds=1))
 @auth_telegram
 def get_filters_settings(chat_id: str, init_data: InitDataModel):
     with GroupRepository() as db:
@@ -46,8 +48,8 @@ def get_filters_settings(chat_id: str, init_data: InitDataModel):
 
 
 @api_group.route("/group/<chat_id>/filters", methods=["POST"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
+@rate_limit(5000, datetime.timedelta(days=1))
+@rate_limit(10, datetime.timedelta(seconds=1))
 @auth_telegram
 def get_filters_settings_post(chat_id: str, init_data: InitDataModel):
     body = request.json

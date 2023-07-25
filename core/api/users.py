@@ -3,8 +3,11 @@
 
 # Copyright SquirrelNetwork
 
+import datetime
+
 from flasgger import swag_from
 from flask import Blueprint, request
+from quart_rate_limiter import rate_limit
 
 from core.database.repository.users import UserRepository
 from core.decorators import auth_required
@@ -13,14 +16,13 @@ from core.utilities.functions import (
     get_paginated_response,
     get_pagination_headers,
 )
-from core.utilities.limiter import limiter
 
 api_users = Blueprint("api_users", __name__)
 
 
 @api_users.route("/users", methods=["GET"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
+@rate_limit(5000, datetime.timedelta(days=1))
+@rate_limit(10, datetime.timedelta(seconds=1))
 @auth_required
 @swag_from("../../openapi/users_list.yaml")
 def users():
@@ -47,8 +49,8 @@ def users():
 
 
 @api_users.route("/users/<int:tg_id>", methods=["GET"])
-@limiter.limit("2000 per day")
-@limiter.limit("10/seconds")
+@rate_limit(2000, datetime.timedelta(days=1))
+@rate_limit(10, datetime.timedelta(seconds=1))
 @swag_from("../../openapi/users_get.yaml")
 def user_by_id(tg_id):
     with UserRepository() as db:
@@ -68,8 +70,8 @@ def user_by_id(tg_id):
 
 
 @api_users.route("/users/<int:tg_id>", methods=["DELETE"])
-@limiter.limit("500 per day")
-@limiter.limit("2/seconds")
+@rate_limit(500, datetime.timedelta(days=1))
+@rate_limit(2, datetime.timedelta(seconds=1))
 @auth_required
 @swag_from("../../openapi/users_delete.yaml")
 def delete_user(tg_id):

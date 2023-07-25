@@ -7,6 +7,7 @@ import datetime
 
 from flasgger import swag_from
 from flask import Blueprint, request
+from quart_rate_limiter import rate_limit
 
 from core.database.repository.superban import SuperbanRepository
 from core.decorators import auth_required
@@ -15,14 +16,13 @@ from core.utilities.functions import (
     get_paginated_response,
     get_pagination_headers,
 )
-from core.utilities.limiter import limiter
 
 api_blacklist = Blueprint("api_blacklist", __name__)
 
 
 @api_blacklist.route("/blacklist/<int:tg_id>", methods=["GET"])
-@limiter.limit("1500 per day")
-@limiter.limit("3/seconds")
+@rate_limit(1500, datetime.timedelta(days=1))
+@rate_limit(3, datetime.timedelta(seconds=1))
 @swag_from("../../openapi/blacklist_get.yaml")
 def get_blacklist(tg_id):
     with SuperbanRepository() as db:
@@ -47,8 +47,8 @@ def get_blacklist(tg_id):
 
 
 @api_blacklist.route("/blacklist", methods=["GET"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
+@rate_limit(5000, datetime.timedelta(days=1))
+@rate_limit(10, datetime.timedelta(seconds=1))
 @auth_required
 @swag_from("../../openapi/blacklist_list.yaml")
 def list_blacklist():
@@ -79,8 +79,8 @@ def list_blacklist():
 
 # TODO Auth Problem
 @api_blacklist.route("/blacklist", methods=["POST"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
+@rate_limit(5000, datetime.timedelta(days=1))
+@rate_limit(10, datetime.timedelta(seconds=1))
 @auth_required
 @swag_from("../../openapi/blacklist_add.yaml")
 def add_blacklist():

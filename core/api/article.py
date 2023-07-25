@@ -3,18 +3,20 @@
 
 # Copyright SquirrelNetwork
 
+import datetime
+
 from flask import Blueprint, jsonify
+from quart_rate_limiter import rate_limit
 
 from core.database.repository.groups import GroupRepository
 from core.utilities.functions import format_iso_date
-from core.utilities.limiter import limiter
 
 api_article = Blueprint("api_article", __name__)
 
 
 @api_article.route("/", methods=["GET"])
-@limiter.limit("3000 per day")
-@limiter.limit("5/seconds")
+@rate_limit(3000, datetime.timedelta(days=1))
+@rate_limit(5, datetime.timedelta(seconds=1))
 def article():
     with GroupRepository() as db:
         articles = db.get_article()

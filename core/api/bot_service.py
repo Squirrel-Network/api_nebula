@@ -3,15 +3,16 @@
 
 # Copyright SquirrelNetwork
 
+import datetime
 import urllib.request
 
 import requests
 from flasgger import swag_from
 from flask import Blueprint, request
+from quart_rate_limiter import rate_limit
 
 from config import Session
 from core.decorators import auth_required
-from core.utilities.limiter import limiter
 
 api_bot_service = Blueprint("api_bot_service", __name__)
 
@@ -28,8 +29,8 @@ def ApiMessage(text, chat_id):
 
 
 @api_bot_service.route("/SendMessage", methods=["POST"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
+@rate_limit(5000, datetime.timedelta(days=1))
+@rate_limit(10, datetime.timedelta(seconds=1))
 @auth_required
 @swag_from("../../openapi/message_post.yaml")
 def send_message():
