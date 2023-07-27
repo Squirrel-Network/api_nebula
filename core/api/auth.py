@@ -3,31 +3,41 @@
 
 # Copyright SquirrelNetwork
 
-from flasgger import swag_from
-from flask import Blueprint, request
+from fastapi import APIRouter, HTTPException
 
 from config import Session
+from core.responses.auth import (
+    AuthResponse,
+    ErrorMissingToken,
+    ErrorNotAuthorized,
+    TokenPayload,
+)
 from core.utilities.token_jwt import TokenJwt, encode_jwt
 
-auth = Blueprint("auth", __name__)
+auth = APIRouter(prefix="/authenticate", tags=["authentication"])
 
 
-@swag_from("../../openapi/auth.yaml")
-@auth.route("/authenticate", methods=["POST"])
-def authenticate():
-    token = None
-
-    if request.json:
-        token = request.json.get("token", None)
-    elif request.form:
-        token = request.form.get("token", None)
+@auth.post(
+    "/",
+    summary="Authenticates user via token",
+    description="Authenticates user via token",
+    responses={
+        200: {"model": AuthResponse, "description": "Authentication OK"},
+        400: {"model": ErrorMissingToken, "description": "Bad Request"},
+        403: {"model": ErrorNotAuthorized, "description": "Invalid auth token"},
+    },
+)
+def authenticate(token_payload: TokenPayload):
+    token = token_payload.token
 
     if not token:
-        return ({"error": "missing token"}, 400)
+        raise HTTPException(status_code=400, detail="Missing token")
 
-    if not token in Session.config.TOKEN.split(","):
-        return ({"error": "not authorized"}, 403)
+    allowed_tokens = Session.config.TOKEN.split(",")
+
+    if token not in allowed_tokens:
+        raise HTTPException(status_code=403, detail="Not authorized")
 
     token_jwt = TokenJwt(True)
 
-    return {"token": encode_jwt(token_jwt)}
+    return AuthResponse(token=encode_jwt(token_jwt))

@@ -14,6 +14,7 @@ from config import Config, Session
 from core.database import init_db
 from core.database.models import SuperbanTable, Users
 from core.utilities.functions import get_formatted_time
+from core.api import auth
 
 # load .env file
 load_dotenv()
@@ -93,3 +94,7 @@ async def users_search_post(request: Request, username: str = Form()):
 @app.get("/admin", include_in_schema=False)
 async def fake_route(request: Request):
     return templates.TemplateResponse("fakeroute.html", {"request": request})
+
+
+# API EndPoint
+app.include_router(auth.auth)
