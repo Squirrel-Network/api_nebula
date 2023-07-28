@@ -3,6 +3,6 @@
 
 # Copyright SquirrelNetwork
 
-__all__ = ("auth",)
+__all__ = ("auth", "users")
 
-from . import auth
+from . import auth, users

@@ -14,9 +14,10 @@ class RateLimiter:
         seconds: int = 0,
         minutes: int = 0,
         hours: int = 0,
+        days: int = 0,
     ) -> None:
         self.times = times
-        self.seconds = seconds + minutes * 60 + hours * 3600
+        self.seconds = seconds + minutes * 60 + hours * 3600 + days * 86400
         self.data = ExpiringDict(1, self.seconds + 1)
 
     async def default_identifier(self, request: Request):

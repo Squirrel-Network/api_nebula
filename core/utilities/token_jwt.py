@@ -7,6 +7,7 @@ import dataclasses
 import datetime
 
 import jwt
+from fastapi import Header, HTTPException
 from jwt.exceptions import (
     DecodeError,
     ExpiredSignatureError,
@@ -55,3 +56,15 @@ def decode_jwt(token: str) -> TokenJwt | None:
         MissingRequiredClaimError,
     ):
         return None
+
+
+async def validate_token(access_token: str = Header(alias="Authorization")) -> TokenJwt:
+    try:
+        token = decode_jwt(access_token.split("Bearer ")[1])
+
+        if not token:
+            raise HTTPException(status_code=401, detail="Not authorized")
+
+        return token
+    except IndexError:
+        raise HTTPException(status_code=401, detail="Not authorized")

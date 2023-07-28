@@ -14,7 +14,7 @@ from config import Config, Session
 from core.database import init_db
 from core.database.models import SuperbanTable, Users
 from core.utilities.functions import get_formatted_time
-from core.api import auth
+from core.api import auth, users
 
 # load .env file
 load_dotenv()
@@ -98,3 +98,4 @@ async def fake_route(request: Request):
 
 # API EndPoint
 app.include_router(auth.auth)
+app.include_router(users.api_users)

@@ -2,15 +2,21 @@
 # -*- coding: utf-8 -*-
 
 # Copyright SquirrelNetwork
-import time
+
 from datetime import datetime
 
+from tortoise.models import Model
 
-def get_limit():
-    limit = request.args.get("limit", current_app.config["PAGE_SIZE_DEFAULT"], type=int)
-    if limit > current_app.config["PAGE_SIZE_MAX"]:
-        limit = current_app.config["PAGE_SIZE_MAX"]
-        print(limit)
+from config import Session
+from core.utilities.enums import OrderDir
+
+
+def get_limit(limit: int | None):
+    if not limit:
+        limit = Session.config.PAGE_SIZE_DEFAULT
+
+    if limit > (size_max := Session.config.PAGE_SIZE_MAX):
+        limit = size_max
 
     return limit
 
@@ -91,17 +97,6 @@ def format_iso_date(d):
     return d
 
 
-def validation_error_response_handler(err, data, schema):
-    # return { 'error': str(err)}, 400
-    current_app.logger.warn("sdads")
-    abort(
-        Response(
-            jsonify({"error": str(err), "data": data, "schema": schema}), status=400
-        )
-    )
-    # abort({ 'error': str(err)}, 400)
-
-
 def get_formatted_time(t: str) -> str:
     p_time = datetime.fromisoformat(t)
     c_time = datetime.now()
@@ -115,3 +110,23 @@ def get_formatted_time(t: str) -> str:
             return p_time.strftime("%d %b")
     else:
         return p_time.strftime("%m.%d.%Y")
+
+
+async def get_pagination_data(
+    model: Model,
+    params: dict,
+    start: int,
+    limit: int | None,
+    order_by: str | None,
+    order_dir: OrderDir,
+):
+    limit = get_limit(limit)
+
+    query = model.all().filter(**params).offset(start).limit(limit)
+
+    if order_by and order_by in model._meta.fields_map.keys():
+        query = query.order_by(
+            order_by if order_dir == OrderDir.ASC else f"-{order_by}"
+        )
+
+    return await query.values()
