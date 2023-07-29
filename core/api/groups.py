@@ -5,28 +5,41 @@
 
 import datetime
 
-from flasgger import swag_from
-from flask import Blueprint, jsonify
-from quart_rate_limiter import rate_limit
+from fastapi import APIRouter, Depends
+from tortoise.functions import Count
 
-from core.database.repository.groups import GroupRepository
+from core.database.models import NebulaUpdates
+from core.responses.base import GenericResponse
+from core.utilities.rate_limiter import RateLimiter
 
-api_groups = Blueprint("api_groups", __name__)
-
-
-@api_groups.route("/groups", methods=["GET"])
-@rate_limit(5000, datetime.timedelta(days=1))
-@rate_limit(5, datetime.timedelta(seconds=1))
-def groups():
-    return {"status": "Under Construction"}
+api_groups = APIRouter(prefix="/v1/top_groups", tags=["community"])
 
 
-@api_groups.route("/top_groups", methods=["GET"])
-@rate_limit(6000, datetime.timedelta(days=1))
-@rate_limit(10, datetime.timedelta(seconds=1))
-@swag_from("../../openapi/top_groups_list.yaml")
-def groups_top_ten():
-    with GroupRepository() as db:
-        rows = db.top_ten_groups()
+async def get_top_10_frequent_groups():
+    last_30_days = datetime.datetime.now() - datetime.timedelta(days=30)
 
-    return jsonify(rows)
+    subquery = (
+        await NebulaUpdates.filter(date__gte=last_30_days)
+        .annotate(count=Count("tg_group_id"))
+        .group_by("tg_group_id")
+        .order_by("-count")
+        .values("tg_group_id", "count")
+    )
+
+    return subquery
+
+
+@api_groups.get(
+    "/",
+    summary="Statistics about the top groups",
+    description="Statistics about the top groups",
+    dependencies=[
+        Depends(RateLimiter(6000, days=1)),
+        Depends(RateLimiter(10, 1)),
+    ],
+    responses={
+        200: {"model": GenericResponse, "description": "Top groups"},
+    },
+)
+async def groups_top_ten():
+    return await get_top_10_frequent_groups()
