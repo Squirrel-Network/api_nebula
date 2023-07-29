@@ -23,15 +23,7 @@ class GetUserByIdResponse(User):
     pass
 
 
-class DeleteUserByIdResponse(BaseModel):
-    status: str
-
-
 class UserNotExistErrorModel(BaseModel):
     error: str = (
         "You have entered an id that does not exist or you have entered incorrect data"
     )
-
-
-class PageLimitErrorModel(BaseModel):
-    error: str

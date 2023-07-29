@@ -6,12 +6,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from core.database.models import Users
-from core.responses.error import NotAuthorizedResponse
+from core.responses.base import GenericError, GenericResponse, NotAuthorizedResponse
 from core.responses.users import (
-    DeleteUserByIdResponse,
     GetUserByIdResponse,
     GetUsersResponse,
-    PageLimitErrorModel,
     UserNotExistErrorModel,
 )
 from core.utilities.enums import OrderDir
@@ -33,7 +31,7 @@ api_users = APIRouter(prefix="/v1/users", tags=["users"])
     ],
     responses={
         200: {"model": GetUsersResponse, "description": "User list"},
-        400: {"model": PageLimitErrorModel, "description": "Bad Request"},
+        400: {"model": GenericError, "description": "Bad Request"},
         401: {
             "model": NotAuthorizedResponse,
             "description": "Not authorized, invalid or missing token",
@@ -55,7 +53,7 @@ async def users(
 
     data, pages = await get_pagination_data(
         Users,
-        {"tg_username": tg_username} if tg_username else {},
+        {"tg_username": tg_username},
         page,
         limit,
         order_by,
@@ -100,7 +98,7 @@ async def user_by_id(tg_id: int):
         Depends(validate_token),
     ],
     responses={
-        200: {"model": DeleteUserByIdResponse, "description": "Operation successful"},
+        200: {"model": GenericResponse, "description": "Operation successful"},
         401: {
             "model": NotAuthorizedResponse,
             "description": "Not authorized, invalid or missing token",
@@ -119,4 +117,4 @@ async def delete_user(tg_id: int):
 
     await data.delete()
 
-    return DeleteUserByIdResponse(status=f"I deleted user {tg_id} from the database")
+    return GenericResponse(status=f"I deleted user {tg_id} from the database")

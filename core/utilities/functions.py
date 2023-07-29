@@ -46,6 +46,7 @@ async def get_pagination_data(
     order_dir: OrderDir,
 ):
     limit = get_limit(limit)
+    params = {k: v for k, v in params.items() if v}
     query = model.all().filter(**params).offset((page - 1) * limit).limit(limit)
 
     if order_by and order_by in model._meta.fields_map.keys():

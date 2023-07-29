@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from config import Config, Session
+from core.api import auth, blacklist, users
 from core.database import init_db
-from core.api import auth, users
 
 # load .env file
 load_dotenv()
@@ -28,4 +28,5 @@ init_db(app)
 
 # API EndPoint
 app.include_router(auth.auth)
+app.include_router(blacklist.api_blacklist)
 app.include_router(users.api_users)
