@@ -14,5 +14,14 @@ class Users(Model):
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
 
+    async def to_dict(self):
+        return {
+            "id": self.id,
+            "tg_id": self.tg_id,
+            "tg_username": self.tg_username,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }
+
     class Meta:
         table = "users"

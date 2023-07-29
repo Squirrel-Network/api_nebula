@@ -19,7 +19,7 @@ conf = Session.config = Config()
 
 
 # Fastapi instance
-app = FastAPI(title="Nebula API", docs_url="/")
+app = FastAPI(title="Nebula API", docs_url="/", version="3.0.0")
 
 
 # Start db
