@@ -13,8 +13,8 @@
 - Install requirements
 `pip install -r requirements.txt`
 
-- `python3 main.py`
+- `uvicorn main:app`
 
 ## API documentation
 
-- https://api.nebula.squirrel-network.online/apidocs/
+- https://api.nebula.squirrel-network.online/
