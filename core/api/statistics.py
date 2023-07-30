@@ -9,8 +9,7 @@ from fastapi import APIRouter, Depends
 from tortoise.functions import Count
 
 from core.database.models import Community, Groups, NebulaUpdates
-from core.responses.base import GenericResponse
-from core.responses.statistics import GroupsTopTenResponse
+from core.responses.statistics import GroupsTopTenResponse, CommunityTopTenResponse
 from core.utilities.rate_limiter import RateLimiter
 
 api_statistics = APIRouter(prefix="/v1/statistics", tags=["statistics"])
@@ -31,18 +30,51 @@ async def get_top_10_frequent_groups():
 
     for x in subquery:
         group = await Groups.get(id_group=x["tg_group_id"])
-        community = await Community.get(tg_group_id=x["tg_group_id"])
 
         result.append(
             {
-                "counter": x["counter"],
-                "group_name": group.group_name,
-                "group_photo": group.group_photo,
-                "language": group.languages,
                 "tg_group_id": x["tg_group_id"],
-                "tg_group_link": community.tg_group_link,
+                "tg_group_name": group.group_name,
+                "total_message": x["counter"],
+            }
+        )
+
+    return result
+
+
+async def get_top_10_frequent_community():
+    last_30_days = datetime.datetime.now() - datetime.timedelta(days=30)
+    result = []
+
+    subquery = (
+        await NebulaUpdates.filter(date__gte=last_30_days)
+        .annotate(counter=Count("tg_group_id"))
+        .group_by("tg_group_id")
+        .order_by("-counter")
+        .values("tg_group_id", "counter")
+    )
+
+    group_ids = {x["tg_group_id"]: x["counter"] for x in subquery}
+
+    communities = (
+        await Community.filter(tg_group_id__in=group_ids.keys())
+        .limit(10)
+        .values("tg_group_id", "tg_group_name", "tg_group_link", "language", "type")
+    )
+
+    for x in communities:
+        group = await Groups.get(id_group=x["tg_group_id"])
+
+        result.append(
+            {
+                "chat_type": x["type"],
+                "group_photo": group.group_photo,
+                "language": x["language"],
+                "tg_group_id": x["tg_group_id"],
+                "tg_group_link": x["tg_group_link"],
+                "tg_group_name": x["tg_group_name"],
+                "total_message": group_ids[x["tg_group_id"]],
                 "total_users": group.total_users,
-                "type": community.type,
             }
         )
 
@@ -63,3 +95,19 @@ async def get_top_10_frequent_groups():
 )
 async def groups_top_ten():
     return GroupsTopTenResponse(results=await get_top_10_frequent_groups())
+
+
+@api_statistics.get(
+    "/top_community",
+    summary="Statistics about the top communitis",
+    description="Statistics about the top communitis",
+    dependencies=[
+        Depends(RateLimiter(6000, days=1)),
+        Depends(RateLimiter(10, 1)),
+    ],
+    responses={
+        200: {"model": CommunityTopTenResponse, "description": "Top groups"},
+    },
+)
+async def community_top_ten():
+    return CommunityTopTenResponse(results=await get_top_10_frequent_community())
