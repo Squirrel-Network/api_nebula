@@ -3,62 +3,68 @@
 
 # Copyright SquirrelNetwork
 
-import datetime
+from fastapi import APIRouter, Depends, HTTPException
 
-from flask import Blueprint, request
-from jsonschema import Draft7Validator
-from quart_rate_limiter import rate_limit
+from core.database.models import Groups
+from core.responses.base import GenericError, GenericResponse, NotAuthorizedResponse
+from core.responses.group import ChangeGroupFiltersPayload, GetGroupFilters
+from core.utilities.rate_limiter import RateLimiter
+from core.utilities.telegram_auth import validate_telegram
 
-from core.database.repository.groups import GroupRepository
-from core.decorators import auth_telegram
-from core.utilities.telegram_auth import InitDataModel
+api_group = APIRouter(prefix="/v1/group", tags=["group"])
 
-FILTERS_KEY = [
-    GroupRepository.EXE_FILTER,
-    GroupRepository.GIF_FILTER,
-    GroupRepository.ZIP_FILTER,
-    GroupRepository.TARGZ_FILTER,
-    GroupRepository.JPG_FILTER,
-    GroupRepository.DOCX_FILTER,
-    GroupRepository.APK_FILTER,
-]
-FILTERS_POST_SCHEMA = Draft7Validator(
-    {
-        "type": "object",
-        "properties": {x: {"type": "boolean"} for x in FILTERS_KEY},
-        "required": FILTERS_KEY,
-    }
+
+@api_group.get(
+    "/{chat_id}/filters",
+    summary="List of group filters",
+    description="List of group filters",
+    dependencies=[
+        Depends(RateLimiter(5000, days=1)),
+        Depends(RateLimiter(10, 1)),
+        Depends(validate_telegram),
+    ],
+    responses={
+        200: {"model": GetGroupFilters, "description": "Filters list"},
+        401: {
+            "model": NotAuthorizedResponse,
+            "description": "Not authorized, invalid or missing token",
+        },
+        404: {"model": GenericError, "description": "Chat_id not found"},
+    },
 )
-
-api_group = Blueprint("api_group", __name__)
-
-
-@api_group.route("/group/<chat_id>/filters", methods=["GET"])
-@rate_limit(5000, datetime.timedelta(days=1))
-@rate_limit(10, datetime.timedelta(seconds=1))
-@auth_telegram
-def get_filters_settings(chat_id: str, init_data: InitDataModel):
-    with GroupRepository() as db:
-        data = db.get_by_id(int(chat_id))
+async def get_filters_settings(chat_id: int):
+    data = await Groups.get_or_none(id_group=chat_id)
 
     if not data:
-        return ({"error": "chat_id does not exist"}, 404)
+        raise HTTPException(404, "chat_id does not exist")
 
-    return {k: bool(v) for k, v in data.items() if k in FILTERS_KEY}
+    return GetGroupFilters(**await data.get_filters())
 
 
-@api_group.route("/group/<chat_id>/filters", methods=["POST"])
-@rate_limit(5000, datetime.timedelta(days=1))
-@rate_limit(10, datetime.timedelta(seconds=1))
-@auth_telegram
-def get_filters_settings_post(chat_id: str, init_data: InitDataModel):
-    body = request.json
+@api_group.post(
+    "/{chat_id}/filters",
+    summary="Change group filters",
+    description="Change group filters",
+    dependencies=[
+        Depends(RateLimiter(5000, days=1)),
+        Depends(RateLimiter(10, 1)),
+        Depends(validate_telegram),
+    ],
+    responses={
+        200: {"model": GenericResponse, "description": "User list"},
+        401: {
+            "model": NotAuthorizedResponse,
+            "description": "Not authorized, invalid or missing token",
+        },
+        404: {"model": GenericError, "description": "Chat_id not found"},
+    },
+)
+async def change_filters_settings(chat_id: int, data: ChangeGroupFiltersPayload):
+    group = await Groups.get_or_none(id_group=chat_id)
 
-    if not FILTERS_POST_SCHEMA.is_valid(body):
-        return ({"error": "body not correct"}, 400)
+    if not group:
+        raise HTTPException(404, "chat_id does not exist")
 
-    with GroupRepository() as db:
-        for k, v in body.items():
-            db.update_groups_settings(k, int(v), chat_id)
+    await group.update_from_dict(data.model_dump()).save()
 
-    return {}
+    return GenericResponse(status="ok")

@@ -55,5 +55,16 @@ class Groups(Model):
     created_at = fields.DatetimeField(auto_now_add=True)
     updated_at = fields.DatetimeField(auto_now=True)
 
+    async def get_filters(self):
+        return {
+            "exe_filter": self.exe_filter,
+            "gif_filter": self.gif_filter,
+            "zip_filter": self.zip_filter,
+            "targz_filter": self.targz_filter,
+            "jpg_filter": self.jpg_filter,
+            "docx_filter": self.docx_filter,
+            "apk_filter": self.apk_filter,
+        }
+
     class Meta:
         table = "groups"

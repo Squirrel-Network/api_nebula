@@ -8,6 +8,7 @@ import hashlib
 import hmac
 import urllib.parse
 
+from fastapi import Header, HTTPException
 import jwt
 from jwt.exceptions import (
     DecodeError,
@@ -72,3 +73,19 @@ def decode_telegram_jwt(token: str) -> bool:
         MissingRequiredClaimError,
     ):
         return False
+
+
+async def validate_telegram(
+    init_data: str = Header(alias="X-Init-Data"),
+    token_jwt: str = Header(alias="Authorization"),
+) -> InitDataModel:
+    try:
+        validate = validate_init_data(init_data)
+        token = token_jwt.split("Bearer ")[1]
+
+        if not validate or not decode_telegram_jwt(token):
+            raise HTTPException(status_code=401, detail="Not authorized")
+
+        return validate
+    except IndexError:
+        raise HTTPException(status_code=401, detail="Not authorized")
