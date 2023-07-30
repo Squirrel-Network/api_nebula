@@ -4,6 +4,7 @@
 # Copyright SquirrelNetwork
 
 __all__ = (
+    "Community",
     "CustomCommands",
     "CustomHandler",
     "GroupUsers",
@@ -19,6 +20,7 @@ __all__ = (
     "WhitelistTable",
 )
 
+from .community import Community
 from .custom_commands import CustomCommands
 from .custom_handler import CustomHandler
 from .group_users import GroupUsers
