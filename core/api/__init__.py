@@ -3,26 +3,6 @@
 
 # Copyright SquirrelNetwork
 
-__all__ = (
-    "article",
-    "auth",
-    "blacklist",
-    "bot_service",
-    "community",
-    "group",
-    "groups",
-    "sn_staff",
-    "test",
-)
+__all__ = ("auth", "blacklist", "group", "statistics", "test", "tools", "users")
 
-from . import (
-    article,
-    auth,
-    blacklist,
-    bot_service,
-    community,
-    group,
-    groups,
-    sn_staff,
-    test,
-)
+from . import auth, blacklist, group, statistics, test, tools, users

@@ -3,100 +3,122 @@
 
 # Copyright SquirrelNetwork
 
-import datetime
+from fastapi import APIRouter, Depends, HTTPException
+from tortoise.exceptions import IntegrityError
 
-from flasgger import swag_from
-from flask import Blueprint, request
-
-from core.database.repository.superban import SuperbanRepository
-from core.decorators import auth_required
-from core.utilities.functions import (
-    format_iso_date,
-    get_paginated_response,
-    get_pagination_headers,
+from core.database.models import SuperbanTable
+from core.responses.base import GenericError, GenericResponse, NotAuthorizedResponse
+from core.responses.blacklist import (
+    AddBlacklistUserPayload,
+    GetBlacklistUserResponse,
+    GetListBlacklistResponse,
+    UserNotFound,
 )
-from core.utilities.limiter import limiter
+from core.utilities.enums import OrderDir
+from core.utilities.functions import get_pagination_data
+from core.utilities.rate_limiter import RateLimiter
+from core.utilities.token_jwt import validate_token
 
-api_blacklist = Blueprint("api_blacklist", __name__)
-
-
-@api_blacklist.route("/blacklist/<int:tg_id>", methods=["GET"])
-@limiter.limit("1500 per day")
-@limiter.limit("3/seconds")
-@swag_from("../../openapi/blacklist_get.yaml")
-def get_blacklist(tg_id):
-    with SuperbanRepository() as db:
-        row = db.get_by_id(int(tg_id))
-        if row:
-            return {
-                "user_tg_id": row["user_id"],
-                "user_tg_first_name": row["user_first_name"],
-                "reason": row["motivation_text"],
-                "date": row["user_date"].isoformat(),
-                "operator_id": row["id_operator"],
-                "operator_first_name": row["first_name_operator"],
-                "operator_username": row["username_operator"],
-            }
-        else:
-            return (
-                {
-                    "error": "The user was not superbanned or you entered an incorrect id"
-                },
-                404,
-            )
+api_blacklist = APIRouter(prefix="/blacklist", tags=["blacklist"])
 
 
-@api_blacklist.route("/blacklist", methods=["GET"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
-@auth_required
-@swag_from("../../openapi/blacklist_list.yaml")
-def list_blacklist():
-    params = get_pagination_headers()
-    params["user_id"] = request.args.get("user_id", None, type=int)
-    params["motivation_text"] = request.args.get("motivation_text", None, type=str)
-    params["id_operator"] = request.args.get("id_operator", None, type=int)
+@api_blacklist.get(
+    "/",
+    summary="List of blacklisted users",
+    description="List of blacklisted users",
+    dependencies=[
+        Depends(RateLimiter(5000, days=1)),
+        Depends(RateLimiter(10, 1)),
+        Depends(validate_token),
+    ],
+    responses={
+        200: {"model": GetListBlacklistResponse, "description": "User list"},
+        400: {"model": GenericError, "description": "Bad Request"},
+        401: {
+            "model": NotAuthorizedResponse,
+            "description": "Not authorized, invalid or missing token",
+        },
+    },
+)
+async def list_blacklist(
+    motivation_text: str | None = None,
+    id_operator: int | None = None,
+    page: int = 1,
+    limit: int | None = None,
+    order_by: str | None = None,
+    order_dir: OrderDir = OrderDir.ASC,
+):
+    if page < 1:
+        raise HTTPException(400, "Page must be greater than or equal to 1.")
 
-    with SuperbanRepository() as db:
-        rows = db.get_all(**params)
-        count = db.count(**params)
+    if limit is not None and limit < 0:
+        raise HTTPException(400, "Limit must be greater than or equal to 0.")
 
-        data = list(
-            map(
-                lambda row: {
-                    "id": row["id"],
-                    "user_id": row["user_id"],
-                    "motivation_text": row["motivation_text"],
-                    "user_date": format_iso_date(row["user_date"]),
-                    "id_operator": row["id_operator"],
-                },
-                rows,
-            )
+    data, pages = await get_pagination_data(
+        SuperbanTable,
+        {"motivation_text": motivation_text, "id_operator": id_operator},
+        page,
+        limit,
+        order_by,
+        order_dir,
+    )
+
+    return GetListBlacklistResponse(results=data, total_page=pages)
+
+
+@api_blacklist.get(
+    "/{tg_id}",
+    summary="Check if a user is blacklisted",
+    description="Check if a user is blacklisted",
+    dependencies=[
+        Depends(RateLimiter(1500, days=1)),
+        Depends(RateLimiter(3, 1)),
+    ],
+    responses={
+        200: {"model": GetBlacklistUserResponse, "description": "Blacklisted user"},
+        404: {"model": UserNotFound, "description": "The user is not blacklisted"},
+    },
+)
+async def get_blacklist(tg_id: int):
+    user = await SuperbanTable.get_or_none(user_id=tg_id)
+
+    if not user:
+        raise HTTPException(
+            404, "The user was not superbanned or you entered an incorrect id"
         )
 
-    return get_paginated_response(data, count, params)
+    return GetBlacklistUserResponse(**await user.to_dict())
 
 
-# TODO Auth Problem
-@api_blacklist.route("/blacklist", methods=["POST"])
-@limiter.limit("5000 per day")
-@limiter.limit("10/seconds")
-@auth_required
-@swag_from("../../openapi/blacklist_add.yaml")
-def add_blacklist():
-    request_data = request.get_json()
-    user_id = request_data.get("user_id", None)
-    operator_id = request_data.get("operator_id", None)
-    if not (user_id and operator_id):
-        return {"error": "Missing user_id or operator_id"}, 400
+@api_blacklist.post(
+    "/",
+    summary="Add blacklisted user",
+    description="Add blacklisted user",
+    dependencies=[
+        Depends(RateLimiter(5000, days=1)),
+        Depends(RateLimiter(10, 1)),
+        Depends(validate_token),
+    ],
+    responses={
+        200: {"model": GenericResponse, "description": "Operation successful"},
+        400: {"model": GenericError, "description": "Bad Request"},
+        401: {
+            "model": NotAuthorizedResponse,
+            "description": "Not authorized, invalid or missing token",
+        },
+    },
+)
+async def add_blacklist(user_payload: AddBlacklistUserPayload):
+    try:
+        await SuperbanTable.create(
+            user_id=user_payload.user_id,
+            user_first_name=user_payload.user_first_name,
+            motivation_text=user_payload.motivation_text,
+            id_operator=user_payload.id_operator,
+            username_operator=user_payload.username_operator,
+            first_name_operator=user_payload.first_name_operator,
+        )
+    except IntegrityError:
+        raise HTTPException(400, "The user has already been blacklisted")
 
-    motivation = request_data.get("motivation", "unspecified")
-    date = datetime.datetime.utcnow().isoformat()
-    with SuperbanRepository() as db:
-        row = db.get_by_id(int(user_id))
-        if row:
-            return {"error": "The user has already been blacklisted"}, 400
-        else:
-            with SuperbanRepository() as db:
-                db.add(int(user_id), motivation, date, operator_id)
-            return {"status": "ok"}
+    return GenericResponse(status="ok")
