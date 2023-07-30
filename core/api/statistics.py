@@ -12,7 +12,7 @@ from core.database.models import Community, Groups, NebulaUpdates
 from core.responses.statistics import GroupsTopTenResponse, CommunityTopTenResponse
 from core.utilities.rate_limiter import RateLimiter
 
-api_statistics = APIRouter(prefix="/v1/statistics", tags=["statistics"])
+api_statistics = APIRouter(prefix="/statistics", tags=["statistics"])
 
 
 async def get_top_10_frequent_groups():

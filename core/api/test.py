@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends
 from core.responses.base import GenericResponse
 from core.utilities.rate_limiter import RateLimiter
 
-api_test = APIRouter(prefix="/v1/hi", tags=["general"])
+api_test = APIRouter(prefix="/hi", tags=["general"])
 
 
 @api_test.get(

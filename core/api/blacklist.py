@@ -19,7 +19,7 @@ from core.utilities.functions import get_pagination_data
 from core.utilities.rate_limiter import RateLimiter
 from core.utilities.token_jwt import validate_token
 
-api_blacklist = APIRouter(prefix="/v1/blacklist", tags=["blacklist"])
+api_blacklist = APIRouter(prefix="/blacklist", tags=["blacklist"])
 
 
 @api_blacklist.get(

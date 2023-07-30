@@ -17,7 +17,7 @@ from core.utilities.functions import get_pagination_data
 from core.utilities.rate_limiter import RateLimiter
 from core.utilities.token_jwt import validate_token
 
-api_users = APIRouter(prefix="/v1/users", tags=["users"])
+api_users = APIRouter(prefix="/users", tags=["users"])
 
 
 @api_users.get(

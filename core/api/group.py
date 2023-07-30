@@ -11,7 +11,7 @@ from core.responses.group import ChangeGroupFiltersPayload, GetGroupFilters
 from core.utilities.rate_limiter import RateLimiter
 from core.utilities.telegram_auth import validate_telegram
 
-api_group = APIRouter(prefix="/v1/group", tags=["group"])
+api_group = APIRouter(prefix="/group", tags=["group"])
 
 
 @api_group.get(

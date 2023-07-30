@@ -15,7 +15,7 @@ from core.utilities.token_jwt import validate_token
 
 MAIN_URL = "https://api.telegram.org/"
 
-api_bot_service = APIRouter(prefix="/v1/tools", tags=["tools"])
+api_bot_service = APIRouter(prefix="/tools", tags=["tools"])
 client = AsyncClient()
 
 
