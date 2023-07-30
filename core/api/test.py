@@ -3,18 +3,25 @@
 
 # Copyright SquirrelNetwork
 
-import datetime
+from fastapi import APIRouter, Depends
 
-from flasgger import swag_from
-from flask import Blueprint
-from quart_rate_limiter import rate_limit
+from core.responses.base import GenericResponse
+from core.utilities.rate_limiter import RateLimiter
 
-api_test = Blueprint("api_test", __name__)
+api_test = APIRouter(prefix="/v1/hi", tags=["general"])
 
 
-@api_test.route("/", methods=["GET"])
-@rate_limit(1000, datetime.timedelta(days=1))
-@rate_limit(3, datetime.timedelta(seconds=1))
-@swag_from("../../openapi/hi.yaml")
-def hi():
-    return {"status": "hi!"}
+@api_test.get(
+    "/",
+    summary="Hi function",
+    description="Hi function",
+    dependencies=[
+        Depends(RateLimiter(1000, days=1)),
+        Depends(RateLimiter(3, 1)),
+    ],
+    responses={
+        200: {"model": GenericResponse, "description": "Hi response"},
+    },
+)
+async def hi():
+    return GenericResponse(status="hi!")
