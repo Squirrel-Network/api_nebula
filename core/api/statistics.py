@@ -8,8 +8,9 @@ import datetime
 from fastapi import APIRouter, Depends
 from tortoise.functions import Count
 
+from config import Session
 from core.database.models import Community, Groups, NebulaUpdates
-from core.responses.statistics import GroupsTopTenResponse, CommunityTopTenResponse
+from core.responses.statistics import CommunityTopTenResponse, GroupsTopTenResponse
 from core.utilities.rate_limiter import RateLimiter
 
 api_statistics = APIRouter(prefix="/statistics", tags=["statistics"])
@@ -21,6 +22,7 @@ async def get_top_10_frequent_groups():
 
     subquery = (
         await NebulaUpdates.filter(date__gte=last_30_days)
+        .exclude(tg_group_id=Session.config.STAFF_GROUP_ID)
         .annotate(counter=Count("tg_group_id"))
         .group_by("tg_group_id")
         .order_by("-counter")
@@ -48,6 +50,7 @@ async def get_top_10_frequent_community():
 
     subquery = (
         await NebulaUpdates.filter(date__gte=last_30_days)
+        .exclude(tg_group_id=Session.config.STAFF_GROUP_ID)
         .annotate(counter=Count("tg_group_id"))
         .group_by("tg_group_id")
         .order_by("-counter")
