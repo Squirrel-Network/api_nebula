@@ -5,6 +5,7 @@
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from config import Config, Session
 from core.api import auth, blacklist, group, statistics, test, tools, users
@@ -20,6 +21,16 @@ conf = Session.config = Config()
 
 # Fastapi instance
 app = FastAPI(title="Nebula API", docs_url="/", version="4.0.0")
+
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Start db
