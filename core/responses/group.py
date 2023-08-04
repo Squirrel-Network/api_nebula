@@ -16,6 +16,16 @@ class GroupFilters(BaseModel):
     apk_filter: bool
 
 
+class GetGroupInfo(BaseModel):
+    chat_id: int
+    group_name: str
+    language: str
+    max_warn: int
+    total_users: int
+    total_messages: int
+    group_photo: str
+
+
 class GetGroupFilters(GroupFilters):
     pass
 

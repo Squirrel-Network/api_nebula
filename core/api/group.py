@@ -3,15 +3,61 @@
 
 # Copyright SquirrelNetwork
 
-from fastapi import APIRouter, Depends, HTTPException
+import datetime
 
-from core.database.models import Groups
+from fastapi import APIRouter, Depends, HTTPException
+from tortoise.functions import Count
+
+from core.database.models import Groups, NebulaUpdates
 from core.responses.base import GenericError, GenericResponse, NotAuthorizedResponse
-from core.responses.group import ChangeGroupFiltersPayload, GetGroupFilters
+from core.responses.group import (
+    ChangeGroupFiltersPayload,
+    GetGroupFilters,
+    GetGroupInfo,
+)
 from core.utilities.rate_limiter import RateLimiter
 from core.utilities.telegram_auth import validate_telegram
 
 api_group = APIRouter(prefix="/group", tags=["group"])
+
+
+async def get_group_messages(chat_id: int):
+    last_30_days = datetime.datetime.now() - datetime.timedelta(days=30)
+
+    subquery = await NebulaUpdates.filter(
+        date__gte=last_30_days, tg_group_id=chat_id
+    ).count()
+
+    return subquery
+
+
+@api_group.get(
+    "/{chat_id}",
+    summary="Get info of group",
+    description="Get info of group",
+    dependencies=[
+        Depends(RateLimiter(5000, days=1)),
+        Depends(RateLimiter(10, 1)),
+        Depends(validate_telegram),
+    ],
+    responses={
+        200: {"model": GetGroupInfo, "description": "Group info"},
+        401: {
+            "model": NotAuthorizedResponse,
+            "description": "Not authorized, invalid or missing token",
+        },
+        404: {"model": GenericError, "description": "Chat_id not found"},
+    },
+)
+async def get_group_info(chat_id: int):
+    data = await Groups.get_or_none(id_group=chat_id)
+
+    if not data:
+        raise HTTPException(404, "chat_id does not exist")
+
+    return GetGroupInfo(
+        **await data.get_info(), total_messages=await get_group_messages(chat_id)
+    )
 
 
 @api_group.get(

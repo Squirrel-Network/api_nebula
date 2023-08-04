@@ -66,5 +66,15 @@ class Groups(Model):
             "apk_filter": self.apk_filter,
         }
 
+    async def get_info(self):
+        return {
+            "chat_id": self.id_group,
+            "group_name": self.group_name,
+            "language": self.languages,
+            "max_warn": self.max_warn,
+            "total_users": self.total_users,
+            "group_photo": self.group_photo,
+        }
+
     class Meta:
         table = "groups"
