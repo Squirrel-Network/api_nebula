@@ -72,7 +72,7 @@ async def get_top_10_frequent_community():
             {
                 "chat_type": x["type"],
                 "group_photo": group.group_photo,
-                "language": x["language"],
+                "language": group.languages,
                 "tg_group_id": x["tg_group_id"],
                 "tg_group_link": x["tg_group_link"],
                 "tg_group_name": x["tg_group_name"],
