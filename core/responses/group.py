@@ -9,11 +9,10 @@ from pydantic import BaseModel
 class GroupFilters(BaseModel):
     exe_filter: bool
     gif_filter: bool
-    zip_filter: bool
-    targz_filter: bool
     jpg_filter: bool
     docx_filter: bool
     apk_filter: bool
+    compress_filter: bool
 
 
 class GetGroupInfo(BaseModel):

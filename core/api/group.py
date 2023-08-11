@@ -6,9 +6,8 @@
 import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
-from tortoise.functions import Count
 
-from core.database.models import Groups, NebulaUpdates
+from core.database.models import Groups, GroupsFilters, NebulaUpdates
 from core.responses.base import GenericError, GenericResponse, NotAuthorizedResponse
 from core.responses.group import (
     ChangeGroupFiltersPayload,
@@ -79,7 +78,7 @@ async def get_group_info(chat_id: int):
     },
 )
 async def get_filters_settings(chat_id: int):
-    data = await Groups.get_or_none(id_group=chat_id)
+    data = await GroupsFilters.get_or_none(chat_id=chat_id)
 
     if not data:
         raise HTTPException(404, "chat_id does not exist")
@@ -106,7 +105,7 @@ async def get_filters_settings(chat_id: int):
     },
 )
 async def change_filters_settings(chat_id: int, data: ChangeGroupFiltersPayload):
-    group = await Groups.get_or_none(id_group=chat_id)
+    group = await GroupsFilters.get_or_none(chat_id=chat_id)
 
     if not group:
         raise HTTPException(404, "chat_id does not exist")
